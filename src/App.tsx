@@ -1,10 +1,11 @@
-import React from 'react';
+import ScoreBoard from './components/ScoreBoard';
 
 function App() {
   return (
-    <div>
-      Color Quiz
-    </div>
+    <>
+      <h1>Color Quiz</h1>
+      <ScoreBoard />      
+    </>
   );
 }
 
