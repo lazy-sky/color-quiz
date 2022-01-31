@@ -31,7 +31,6 @@ function ColorBoard({
         id: 1,
         onClick: () => {
           setRemainingTime(remainingTime => remainingTime - 3);
-          console.log('wrong!');
         },
         red: baseRed,
         green: baseGreen,
@@ -41,7 +40,6 @@ function ColorBoard({
         id: 2,
         onClick: () => {
           setRemainingTime(remainingTime => remainingTime - 3);
-          console.log('wrong!');
         },
         red: baseRed,
         green: baseGreen,
@@ -51,7 +49,6 @@ function ColorBoard({
         id: 3,
         onClick: () => {
           setRemainingTime(remainingTime => remainingTime - 3);
-          console.log('wrong!');
         },
         red: baseRed,
         green: baseGreen,
@@ -67,11 +64,11 @@ function ColorBoard({
         green: baseGreen - 25,
         blue: baseBlue -25
       },
-    ])
+    ].sort(() => (Math.random() - 0.5)))
   }
 
   useEffect(() => {
-    makeRandomColors()
+    makeRandomColors();
   }, [])
 
   return (
@@ -84,8 +81,6 @@ function ColorBoard({
         >
           색깔
         </li>
-      )).sort(() => (
-        Math.random() - 0.5
       ))}
     </>
   );
