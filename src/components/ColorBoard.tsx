@@ -63,9 +63,9 @@ function ColorBoard({
           setScore(score => score + Math.pow(stage, 3) * remainingTime);
           setStage(stage => stage + 1);
         },
-        red: baseRed - 25,
-        green: baseGreen - 25,
-        blue: baseBlue -25
+        red: baseRed - 26 + stage,
+        green: baseGreen - 26 + stage,
+        blue: baseBlue - 26 + stage
       },
     ].sort(() => (Math.random() - 0.5)));
   }
