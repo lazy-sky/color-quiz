@@ -73,6 +73,7 @@ function ColorBoard({
     setColors(colors);
     setScore(score => score + Math.pow(stage, 3) * remainingTime);
     setStage(stage => stage + 1);
+    setRemainingTime(15);
   }
 
   return (
