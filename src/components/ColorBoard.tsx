@@ -59,8 +59,6 @@ function ColorBoard({
       {
         id: 4,
         onClick: () => {
-          makeRandomColors();
-          // TODO: stage, remainingTime이 갱신되지 않고 초기값으로 나타난다.
           console.log(stage, remainingTime);
           setScore(score => score + Math.pow(stage, 3) * remainingTime);
           setStage(stage => stage + 1);
@@ -74,7 +72,7 @@ function ColorBoard({
 
   useEffect(() => {
     makeRandomColors();
-  }, [])
+  }, [stage])
 
   return (
     <>
