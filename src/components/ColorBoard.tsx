@@ -26,53 +26,42 @@ function ColorBoard({
   let [baseRed, baseGreen, baseBlue] = [getRandomColor(), getRandomColor(), getRandomColor()];
   const [colors, setColors] = useState<ColorProps[] | []>([]);
 
+  const makeBaseColor = (id: number) => {
+    return {
+      id,
+      onClick: () => {
+        setRemainingTime(remainingTime => remainingTime - 3);
+      },
+      red: baseRed,
+      green: baseGreen,
+      blue: baseBlue
+    }
+  }
+
   const makeRandomColors = () => {
     [baseRed, baseGreen, baseBlue] = [getRandomColor(), getRandomColor(), getRandomColor()];
-    setColors([
-      {
-        id: 1,
-        onClick: () => {
-          setRemainingTime(remainingTime => remainingTime - 3);
-        },
-        red: baseRed,
-        green: baseGreen,
-        blue: baseBlue
-      },
-      {
-        id: 2,
-        onClick: () => {
-          setRemainingTime(remainingTime => remainingTime - 3);
-        },
-        red: baseRed,
-        green: baseGreen,
-        blue: baseBlue
-      },
-      {
-        id: 3,
-        onClick: () => {
-          setRemainingTime(remainingTime => remainingTime - 3);
-        },
-        red: baseRed,
-        green: baseGreen,
-        blue: baseBlue
-      },
-      {
-        id: 4,
-        onClick: () => {
-          console.log(stage, remainingTime);
-          setScore(score => score + Math.pow(stage, 3) * remainingTime);
-          setStage(stage => stage + 1);
-        },
-        red: baseRed - 26 + stage,
-        green: baseGreen - 26 + stage,
-        blue: baseBlue - 26 + stage
-      },
-    ].sort(() => (Math.random() - 0.5)));
+    const tempColors = new Array(Math.pow(Math.round((stage + 0.5) / 2) + 1, 2) - 1)
+      .fill(1)
+      .map(color => makeBaseColor(Math.random()));
+    tempColors.push({
+      id: Math.random(),
+      onClick: handleClickAnswer,
+      red: baseRed - 26 + stage,
+      green: baseGreen - 26 + stage,
+      blue: baseBlue - 26 + stage
+    });
+    setColors(tempColors.sort(() => (Math.random() - 0.5)));
   }
 
   useEffect(() => {
     makeRandomColors();
   }, [stage])
+
+  const handleClickAnswer = () => {
+    setColors(colors);
+    setScore(score => score + Math.pow(stage, 3) * remainingTime);
+    setStage(stage => stage + 1);
+  }
 
   return (
     <>
