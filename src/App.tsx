@@ -14,6 +14,8 @@ function App() {
       <ScoreBoard 
         stage={stage} 
         score={score}
+        remainingTime={remainingTime}
+        setRemainingTime={setRemainingTime}
       />
       <ColorBoard 
         stage={stage} 

@@ -1,15 +1,16 @@
-import { useState } from 'react';
 import { useInterval } from '../hooks/score';
 
-function ScoreBoard() {
-  const [stage, setStage] = useState(1);
-  const [remainingTime, setRemainingTime] = useState(15);
-  const [score, setScore] = useState(0);
-
+interface ScoreBoardProps {
+  stage: number;
+  score: number;
+  remainingTime: number;
+  setRemainingTime: (remainingTime: number | ((remainingTime: number) => number)) => void;
+}
+function ScoreBoard({ stage, score, remainingTime, setRemainingTime }: ScoreBoardProps ) {
   useInterval(() => {
     setRemainingTime(count => count - 1);
 
-    if (remainingTime === 0) {
+    if (remainingTime <= 0) {
       alert('Game Over!')
       setRemainingTime(16);
     }

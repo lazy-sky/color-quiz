@@ -1,5 +1,12 @@
+import { useEffect } from 'react';
 import { useState } from 'react';
 
+interface ColorBoardProps {
+  stage: number;
+  setStage: (stage: number | ((stage: number) => number)) => void;
+  remainingTime: number;
+  setRemainingTime: (remainingTime: number | ((remainingTime: number) => number)) => void;
+}
 interface ColorProps {
   id: number,
   onClick: () => void,
@@ -8,66 +15,54 @@ interface ColorProps {
   blue: number
 }
 
-function ColorBoard() {
+function ColorBoard({ 
+  // stage, 
+  setStage,
+  // remainingTime,
+  setRemainingTime 
+}: ColorBoardProps) {
   let [baseRed, baseGreen, baseBlue] = [getRandomColor(), getRandomColor(), getRandomColor()];
-  const [colors, setColors] = useState<ColorProps[]>([
-    {
-      id: 1,
-      onClick: () => console.log('wrong!'),
-      red: baseRed,
-      green: baseGreen,
-      blue: baseBlue
-    },
-    {
-      id: 2,
-      onClick: () => console.log('wrong!'),
-      red: baseRed,
-      green: baseGreen,
-      blue: baseBlue
-    },
-    {
-      id: 3,
-      onClick: () => console.log('wrong!'),
-      red: baseRed,
-      green: baseGreen,
-      blue: baseBlue
-    },
-    {
-      id: 4,
-      onClick: () => makeRandomColors(),
-      red: baseRed - 25,
-      green: baseGreen - 25,
-      blue: baseBlue -25
-    },
-  ]);
+  const [colors, setColors] = useState<ColorProps[] | []>([]);
 
   const makeRandomColors = () => {
     [baseRed, baseGreen, baseBlue] = [getRandomColor(), getRandomColor(), getRandomColor()];
     setColors([
       {
         id: 1,
-        onClick: () => console.log('wrong!'),
+        onClick: () => {
+          setRemainingTime(remainingTime => remainingTime - 3);
+          console.log('wrong!');
+        },
         red: baseRed,
         green: baseGreen,
         blue: baseBlue
       },
       {
         id: 2,
-        onClick: () => console.log('wrong!'),
+        onClick: () => {
+          setRemainingTime(remainingTime => remainingTime - 3);
+          console.log('wrong!');
+        },
         red: baseRed,
         green: baseGreen,
         blue: baseBlue
       },
       {
         id: 3,
-        onClick: () => console.log('wrong!'),
+        onClick: () => {
+          setRemainingTime(remainingTime => remainingTime - 3);
+          console.log('wrong!');
+        },
         red: baseRed,
         green: baseGreen,
         blue: baseBlue
       },
       {
         id: 4,
-        onClick: () => makeRandomColors(),
+        onClick: () => {
+          makeRandomColors()
+          setStage(stage => stage + 1)
+        },
         red: baseRed - 25,
         green: baseGreen - 25,
         blue: baseBlue -25
@@ -75,9 +70,13 @@ function ColorBoard() {
     ])
   }
 
+  useEffect(() => {
+    makeRandomColors()
+  }, [])
+
   return (
     <>
-      {colors.map(({ id, onClick, red, green, blue }) => (
+      {colors?.map(({ id, onClick, red, green, blue }) => (
         <li 
           key={id} 
           style={{ backgroundColor: `rgb(${red},${green},${blue})` }}
