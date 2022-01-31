@@ -17,7 +17,6 @@ interface ColorProps {
   blue: number
 }
 
-
 const Grid = styled.ul`    
   list-style: none;
   padding: 0;

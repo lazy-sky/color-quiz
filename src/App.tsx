@@ -10,7 +10,11 @@ function App() {
 
   return (
     <>
-      <h1>Color Quiz</h1>
+      <h1 style={{
+        textAlign: 'center'
+      }}>
+        Color Quiz
+      </h1>
       <ScoreBoard 
         stage={stage} 
         score={score}
