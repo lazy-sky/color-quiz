@@ -6,6 +6,7 @@ interface ColorBoardProps {
   setStage: (stage: number | ((stage: number) => number)) => void;
   remainingTime: number;
   setRemainingTime: (remainingTime: number | ((remainingTime: number) => number)) => void;
+  setScore: (score: number | ((score: number) => number)) => void;
 }
 interface ColorProps {
   id: number,
@@ -16,10 +17,11 @@ interface ColorProps {
 }
 
 function ColorBoard({ 
-  // stage, 
+  stage, 
   setStage,
-  // remainingTime,
-  setRemainingTime 
+  remainingTime,
+  setRemainingTime,
+  setScore
 }: ColorBoardProps) {
   let [baseRed, baseGreen, baseBlue] = [getRandomColor(), getRandomColor(), getRandomColor()];
   const [colors, setColors] = useState<ColorProps[] | []>([]);
@@ -57,14 +59,16 @@ function ColorBoard({
       {
         id: 4,
         onClick: () => {
-          makeRandomColors()
-          setStage(stage => stage + 1)
+          makeRandomColors();
+          console.log(stage, remainingTime);
+          setScore(score => score + Math.pow(stage, 3) * remainingTime);
+          setStage(stage => stage + 1);
         },
         red: baseRed - 25,
         green: baseGreen - 25,
         blue: baseBlue -25
       },
-    ].sort(() => (Math.random() - 0.5)))
+    ].sort(() => (Math.random() - 0.5)));
   }
 
   useEffect(() => {
