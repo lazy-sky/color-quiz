@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useState } from 'react';
 
+import styled from 'styled-components';
 interface ColorBoardProps {
   stage: number;
   setStage: (stage: number | ((stage: number) => number)) => void;
@@ -9,12 +10,24 @@ interface ColorBoardProps {
   setScore: (score: number | ((score: number) => number)) => void;
 }
 interface ColorProps {
-  id: number,
-  onClick: () => void,
-  red: number,
-  green: number,
+  id: number;
+  onClick: () => void;
+  red: number;
+  green: number;
   blue: number
 }
+
+
+const Grid = styled.ul`    
+  list-style: none;
+  padding: 0;
+
+  display: grid;
+  gap: 4px;
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+`;
 
 function ColorBoard({ 
   stage, 
@@ -64,17 +77,19 @@ function ColorBoard({
   }
 
   return (
-    <>
+    <Grid style={{ 
+      gridTemplateColumns: `repeat(${Math.round((stage + 0.5) / 2) + 1}, 1fr)`
+    }}>
       {colors?.map(({ id, onClick, red, green, blue }) => (
         <li 
           key={id} 
-          style={{ backgroundColor: `rgb(${red},${green},${blue})` }}
+          style={{ 
+            backgroundColor: `rgb(${red},${green},${blue})`
+          }}
           onClick={onClick}
-        >
-          색깔
-        </li>
+        />
       ))}
-    </>
+    </Grid>
   );
 };
 
