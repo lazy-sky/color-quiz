@@ -58,6 +58,13 @@ function ColorBoard({
       rgb,
       onClick: () => {
         // TODO: 음수가 안되도록, 0으로 보여주고, 바로 게임오버
+        // TODO: 상태가 반영되지 않았다.
+        // console.log(remainingTime); // 0
+        // if (remainingTime <= 3) {
+        //   setRemainingTime(0);
+        //   return;
+        // }
+
         setRemainingTime(remainingTime => remainingTime - 3);
       },
     }
