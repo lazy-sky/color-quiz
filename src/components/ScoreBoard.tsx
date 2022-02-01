@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useInterval } from '../hooks/score';
 
 import styled from 'styled-components';
@@ -35,9 +36,17 @@ function ScoreBoard({
   setRemainingTime,
   setScore
 }: ScoreBoardProps ) {
+  const [isRunning, setIsRunning] = useState(true);
+
+  useEffect(() => {
+    // TODO: 타이머 멈추도록, 임시로 남은 시간 무한대로 설정
+    if (!isRunning) return;
+  }, [isRunning]);
 
   useInterval(() => {
-    setRemainingTime(count => count - 1);
+    if (isRunning) {
+      setRemainingTime(count => count - 1);
+    }
 
     if (remainingTime <= 0) {
       MySwal.fire({
@@ -46,12 +55,13 @@ function ScoreBoard({
         confirmButtonText: '재도전!',
       })
       .then(() => {
-        console.log('go first')
         setStage(1);
         setRemainingTime(15);
         setScore(0);
+        setIsRunning(true);
       });
-      setRemainingTime(999);
+      setRemainingTime(Infinity);
+      setIsRunning(false);
     }
   });
 
