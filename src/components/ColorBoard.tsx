@@ -72,9 +72,9 @@ function ColorBoard({
       id: Math.random(),
       onClick: () => setStage(stage => stage + 1),
       rgb: {
-        red: red - 26 + stage,
-        green: green - 26 + stage,
-        blue: blue - 26 + stage
+        red: red - 26 + Math.min(25, stage),
+        green: green - 26 + Math.min(25, stage),
+        blue: blue - 26 + Math.min(25, stage)
       }
     }
     newColors.push(answerColor);
