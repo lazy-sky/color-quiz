@@ -4,11 +4,13 @@ import styled from 'styled-components';
 
 interface ScoreBoardProps {
   stage: number;
+  setStage: (stage: number | ((stage: number) => number)) => void;
   score: number;
   remainingTime: number;
   setRemainingTime: (remainingTime: number | ((remainingTime: number) => number)) => void;
+  setScore: (score: number | ((score: number) => number)) => void;
 }
-const StartButton = styled.button`
+const RestartButton = styled.button`
   display: block;
   margin: 0 auto 12px;
 `;
@@ -20,7 +22,14 @@ const Information = styled.div`
   margin-bottom: 12px;
 `;
 
-function ScoreBoard({ stage, score, remainingTime, setRemainingTime }: ScoreBoardProps ) {
+function ScoreBoard({ 
+  stage,
+  setStage,
+  score, 
+  remainingTime, 
+  setRemainingTime,
+  setScore
+}: ScoreBoardProps ) {
   useInterval(() => {
     setRemainingTime(count => count - 1);
 
@@ -31,14 +40,16 @@ function ScoreBoard({ stage, score, remainingTime, setRemainingTime }: ScoreBoar
   });
 
   const handleClickStart = () => {
+    setScore(0);
+    setStage(1);
     setRemainingTime(15);
   }
 
   return (
     <>
-      <StartButton onClick={handleClickStart}>
-        Start!
-      </StartButton>
+      <RestartButton onClick={handleClickStart}>
+        다시하기!
+      </RestartButton>
       <Information>
           <div>스테이지: {stage}</div>
           <div>남은 시간: {remainingTime}</div>

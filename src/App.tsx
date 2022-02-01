@@ -16,8 +16,10 @@ function App() {
         Color Quiz
       </h1>
       <ScoreBoard 
-        stage={stage} 
+        stage={stage}
+        setStage={setStage} 
         score={score}
+        setScore={setScore}
         remainingTime={remainingTime}
         setRemainingTime={setRemainingTime}
       />
