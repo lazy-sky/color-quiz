@@ -90,6 +90,7 @@ function ColorBoard({
 
   useEffect(() => {
     setRemainingTime(15);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -101,6 +102,7 @@ function ColorBoard({
 
     setScore(score => score + Math.pow(stage, 3) * remainingTime);
     setRemainingTime(15);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage]);
 
   return (
