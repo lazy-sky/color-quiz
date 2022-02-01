@@ -7,15 +7,16 @@ interface ColorBoardProps {
   setStage: (stage: number | ((stage: number) => number)) => void;
   remainingTime: number;
   setRemainingTime: (remainingTime: number | ((remainingTime: number) => number)) => void;
+  score: number;
   setScore: (score: number | ((score: number) => number)) => void;
-}
+};
 interface ColorProps {
   id: number;
   onClick: () => void;
   red: number;
   green: number;
-  blue: number
-}
+  blue: number;
+};
 
 const Grid = styled.ul`    
   list-style: none;
@@ -33,15 +34,21 @@ function ColorBoard({
   setStage,
   remainingTime,
   setRemainingTime,
+  score,
   setScore
 }: ColorBoardProps) {
   let [baseRed, baseGreen, baseBlue] = [getRandomColor(), getRandomColor(), getRandomColor()];
   const [colors, setColors] = useState<ColorProps[] | []>([]);
 
+  function getRandomColor(): number {
+    return Math.floor(Math.random() * 257);
+  };
+
   const makeBaseColor = (id: number) => {
     return {
       id,
       onClick: () => {
+        // TODO: 음수가 안되도록, 0으로 보여주고, 바로 게임오버
         setRemainingTime(remainingTime => remainingTime - 3);
       },
       red: baseRed,
@@ -57,7 +64,7 @@ function ColorBoard({
       .map(color => makeBaseColor(Math.random()));
     tempColors.push({
       id: Math.random(),
-      onClick: handleClickAnswer,
+      onClick: () => setStage(stage => stage + 1),
       red: baseRed - 26 + stage,
       green: baseGreen - 26 + stage,
       blue: baseBlue - 26 + stage
@@ -66,15 +73,20 @@ function ColorBoard({
   }
 
   useEffect(() => {
-    makeRandomColors();
-  }, [stage])
-
-  const handleClickAnswer = () => {
-    setColors(colors);
-    setScore(score => score + Math.pow(stage, 3) * remainingTime);
-    setStage(stage => stage + 1);
     setRemainingTime(15);
-  }
+  }, []);
+
+  useEffect(() => {
+    makeRandomColors();
+    if (score === 0) {
+      setScore(remainingTime);
+      return;
+    };
+
+    setScore(score => score + Math.pow(stage, 3) * remainingTime);
+    // handleClickAnswer 안에서 처리하면 남은 시간이 계속 15초로 계산되어 점수에 반영되는 문제 해결
+    setRemainingTime(15);
+  }, [stage]);
 
   return (
     <Grid style={{ 
@@ -92,10 +104,5 @@ function ColorBoard({
     </Grid>
   );
 };
-
-function getRandomColor(): number {
-  let randomInt = Math.floor(Math.random() * 257);
-  return randomInt;
-}
 
 export default ColorBoard;
