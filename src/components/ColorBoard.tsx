@@ -10,12 +10,17 @@ interface ColorBoardProps {
   score: number;
   setScore: (score: number | ((score: number) => number)) => void;
 };
-interface ColorProps {
-  id: number;
-  onClick: () => void;
+
+interface RGBProps {
   red: number;
   green: number;
   blue: number;
+}
+
+interface ColorProps {
+  id: number;
+  onClick: () => void;
+  rgb: RGBProps;
 };
 
 const Grid = styled.ul`    
@@ -37,39 +42,43 @@ function ColorBoard({
   score,
   setScore
 }: ColorBoardProps) {
-  let [baseRed, baseGreen, baseBlue] = [getRandomColor(), getRandomColor(), getRandomColor()];
   const [colors, setColors] = useState<ColorProps[] | []>([]);
 
-  function getRandomColor(): number {
-    return Math.floor(Math.random() * 257);
+  function getRandomColor(): RGBProps {
+    return {
+      red: Math.floor(Math.random() * 257), 
+      green: Math.floor(Math.random() * 257), 
+      blue: Math.floor(Math.random() * 257)
+    };
   };
 
-  const makeBaseColor = (id: number) => {
+  const makeBaseColor = (id: number, rgb: RGBProps) => {
     return {
       id,
+      rgb,
       onClick: () => {
         // TODO: 음수가 안되도록, 0으로 보여주고, 바로 게임오버
         setRemainingTime(remainingTime => remainingTime - 3);
       },
-      red: baseRed,
-      green: baseGreen,
-      blue: baseBlue
     }
   }
 
   const makeRandomColors = () => {
-    [baseRed, baseGreen, baseBlue] = [getRandomColor(), getRandomColor(), getRandomColor()];
-    const tempColors = new Array(Math.pow(Math.round((stage + 0.5) / 2) + 1, 2) - 1)
+    const { red, green, blue } = getRandomColor();
+    const newColors = new Array(Math.pow(Math.round((stage + 0.5) / 2) + 1, 2) - 1)
       .fill(1)
-      .map(color => makeBaseColor(Math.random()));
-    tempColors.push({
+      .map(_ => makeBaseColor(Math.random(), { red, green, blue }));
+    const answerColor = {
       id: Math.random(),
       onClick: () => setStage(stage => stage + 1),
-      red: baseRed - 26 + stage,
-      green: baseGreen - 26 + stage,
-      blue: baseBlue - 26 + stage
-    });
-    setColors(tempColors.sort(() => (Math.random() - 0.5)));
+      rgb: {
+        red: red - 26 + stage,
+        green: green - 26 + stage,
+        blue: blue - 26 + stage
+      }
+    }
+    newColors.push(answerColor);
+    setColors(newColors.sort(() => (Math.random() - 0.5)));
   }
 
   useEffect(() => {
@@ -84,7 +93,6 @@ function ColorBoard({
     };
 
     setScore(score => score + Math.pow(stage, 3) * remainingTime);
-    // handleClickAnswer 안에서 처리하면 남은 시간이 계속 15초로 계산되어 점수에 반영되는 문제 해결
     setRemainingTime(15);
   }, [stage]);
 
@@ -92,11 +100,11 @@ function ColorBoard({
     <Grid style={{ 
       gridTemplateColumns: `repeat(${Math.round((stage + 0.5) / 2) + 1}, 1fr)`
     }}>
-      {colors?.map(({ id, onClick, red, green, blue }) => (
+      {colors?.map(({ id, onClick, rgb }) => (
         <li 
           key={id} 
           style={{ 
-            backgroundColor: `rgb(${red},${green},${blue})`
+            backgroundColor: `rgb(${rgb.red},${rgb.green},${rgb.blue})`
           }}
           onClick={onClick}
         />
