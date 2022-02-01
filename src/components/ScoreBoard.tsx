@@ -47,8 +47,11 @@ function ScoreBoard({
       })
       .then(() => {
         console.log('go first')
+        setStage(1);
+        setRemainingTime(15);
+        setScore(0);
       });
-      setRemainingTime(16);
+      setRemainingTime(999);
     }
   });
 
