@@ -1,6 +1,8 @@
 import { useInterval } from '../hooks/score';
 
 import styled from 'styled-components';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 interface ScoreBoardProps {
   stage: number;
@@ -10,6 +12,9 @@ interface ScoreBoardProps {
   setRemainingTime: (remainingTime: number | ((remainingTime: number) => number)) => void;
   setScore: (score: number | ((score: number) => number)) => void;
 }
+
+const MySwal = withReactContent(Swal);
+
 const RestartButton = styled.button`
   display: block;
   margin: 0 auto 12px;
@@ -30,11 +35,19 @@ function ScoreBoard({
   setRemainingTime,
   setScore
 }: ScoreBoardProps ) {
+
   useInterval(() => {
     setRemainingTime(count => count - 1);
 
     if (remainingTime <= 0) {
-      alert('Game Over!')
+      MySwal.fire({
+        title: <p>GAME OVER!</p>,
+        text: `스테이지: ${stage} 점수: ${score}`,
+        confirmButtonText: '재도전!',
+      })
+      .then(() => {
+        console.log('go first')
+      });
       setRemainingTime(16);
     }
   });
