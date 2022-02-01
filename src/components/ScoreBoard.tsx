@@ -16,16 +16,20 @@ interface ScoreBoardProps {
 
 const MySwal = withReactContent(Swal);
 
-const RestartButton = styled.button`
-  display: block;
-  margin: 0 auto 12px;
-`;
-
 const Information = styled.div`
   display: flex;
-  justify-content: center;
-  gap: 8px;
+  justify-content: space-between;
+  width: 300px;
+  margin: 0 auto;
+  gap: 12px;
   margin-bottom: 12px;
+
+  #stage, #score, #time {
+    font-size: 12px;
+    span {
+      font-size: 24px;
+    }
+  }
 `;
 
 function ScoreBoard({ 
@@ -51,7 +55,10 @@ function ScoreBoard({
     if (remainingTime <= 0) {
       MySwal.fire({
         title: <p>GAME OVER!</p>,
-        text: `스테이지: ${stage} 점수: ${score}`,
+        html: `
+          <div>${stage}단계</div>
+          <div>${score}점</div>
+        `,
         confirmButtonText: '재도전!',
       })
       .then(() => {
@@ -65,21 +72,20 @@ function ScoreBoard({
     }
   });
 
-  const handleClickStart = () => {
-    setScore(0);
-    setStage(1);
-    setRemainingTime(15);
-  }
-
   return (
     <>
-      <RestartButton onClick={handleClickStart}>
-        다시하기!
-      </RestartButton>
       <Information>
-          <div>스테이지: {stage}</div>
-          <div>남은 시간: {remainingTime}</div>
-          <div>점수: {score}</div>
+        <div>
+          <div id='stage'>
+            <span>{stage}</span>단계
+          </div>
+          <div id='time'>
+            <span>{remainingTime}</span>초
+          </div>
+        </div>
+        <div id='score'>
+          <span>{score}</span>점
+        </div>
       </Information>
     </>
   );

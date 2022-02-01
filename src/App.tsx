@@ -9,9 +9,15 @@ function App() {
   const [score, setScore] = useState(0);
 
   return (
-    <>
+    <div style={{ 
+      color: '#FDF7FF',
+      backgroundColor: '#19171B',
+      padding: '8px',
+      height: '100vh',
+    }}>
       <h1 style={{
-        textAlign: 'center'
+        textAlign: 'center',
+        margin: 0
       }}>
         Color Quiz
       </h1>
@@ -31,7 +37,7 @@ function App() {
         score={score}
         setScore={setScore}
       /> 
-    </>
+    </div>
   );
 }
 
