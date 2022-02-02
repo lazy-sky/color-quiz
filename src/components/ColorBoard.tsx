@@ -45,6 +45,14 @@ function ColorBoard({
   const initialDifficulty = 26;
   const [colors, setColors] = useState<ColorProps[] | []>([]);
 
+  function handleClickWrong() {
+    setRemainingTime(remainingTime => Math.max(0, remainingTime - 3));
+  } 
+
+  function handleClickAnswer() {
+    setStage(stage => stage + 1);
+  }
+
   function getRandomColor(): RGBProps {
     return {
       red: Math.floor(Math.random() * 257), 
@@ -57,9 +65,7 @@ function ColorBoard({
     return {
       id,
       rgb,
-      onClick: () => {
-        setRemainingTime(remainingTime => Math.max(0, remainingTime - 3));
-      },
+      onClick: handleClickWrong
     }
   }
 
@@ -70,7 +76,7 @@ function ColorBoard({
       .map(_ => makeBaseColor(Math.random(), { red, green, blue }));
     const answerColor = {
       id: Math.random(),
-      onClick: () => setStage(stage => stage + 1),
+      onClick: handleClickAnswer,
       rgb: {
         red: red - initialDifficulty + Math.min(initialDifficulty - 1, stage),
         green: green - initialDifficulty + Math.min(initialDifficulty - 1, stage),
