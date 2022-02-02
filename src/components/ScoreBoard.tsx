@@ -68,33 +68,30 @@ function ScoreBoard({
         setScore(0);
         setIsRunning(true);
       });
-      setRemainingTime(-1);
       setIsRunning(false);
     }
   });
 
   return (
-    <>
-      <Information>
-        <div>
-          <div id='stage'>
-            <span>{stage}</span>단계
-          </div>
-          <div id='time'>
-            {isRunning 
-            ? (<>
-                <span>{remainingTime}</span>초
-              </>) 
-            : (<>
-                <span>시간 초과!</span>
-              </>)}
-          </div>
+    <Information>
+      <div>
+        <div id='stage'>
+          <span>{stage}</span>단계
         </div>
-        <div id='score'>
-          <span>{score}</span>점
+        <div id='time'>
+          {isRunning 
+          ? (<>
+              <span>{remainingTime}</span>초
+            </>) 
+          : (<>
+              <span>시간 초과!</span>
+            </>)}
         </div>
-      </Information>
-    </>
+      </div>
+      <div id='score'>
+        <span>{score}</span>점
+      </div>
+    </Information>
   );
 };
 

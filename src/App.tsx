@@ -4,6 +4,7 @@ import ScoreBoard from './components/ScoreBoard';
 import ColorBoard from './components/ColorBoard';
 
 function App() {
+  // TODO: 고민 거리, 이 상태들을 객체로 묶어서 관리하는 게 좋을까? 아니면 분리해둘까?
   const [stage, setStage] = useState(1);
   const [remainingTime, setRemainingTime] = useState(15);
   const [score, setScore] = useState(0);
