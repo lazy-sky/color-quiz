@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useInterval } from '../hooks/score';
 
 import styled from 'styled-components';
@@ -12,6 +12,8 @@ interface ScoreBoardProps {
   remainingTime: number;
   setRemainingTime: (remainingTime: number | ((remainingTime: number) => number)) => void;
   setScore: (score: number | ((score: number) => number)) => void;
+  isRunning: boolean;
+  setIsRunning: (isRunning: boolean | ((isRunning: boolean) => boolean)) => void;
 }
 
 const MySwal = withReactContent(Swal);
@@ -38,12 +40,11 @@ function ScoreBoard({
   score, 
   remainingTime, 
   setRemainingTime,
-  setScore
+  setScore,
+  isRunning,
+  setIsRunning
 }: ScoreBoardProps ) {
-  const [isRunning, setIsRunning] = useState(true);
-
   useEffect(() => {
-    // TODO: 타이머 멈추도록, 임시로 남은 시간 무한대로 설정
     if (!isRunning) return;
   }, [isRunning]);
 
@@ -52,7 +53,7 @@ function ScoreBoard({
       setRemainingTime(count => count - 1);
     }
 
-    if (remainingTime <= 0) {
+    if (remainingTime === 0) {
       MySwal.fire({
         title: <p>GAME OVER!</p>,
         html: `
@@ -67,7 +68,7 @@ function ScoreBoard({
         setScore(0);
         setIsRunning(true);
       });
-      setRemainingTime(Infinity);
+      setRemainingTime(-1);
       setIsRunning(false);
     }
   });
@@ -80,7 +81,13 @@ function ScoreBoard({
             <span>{stage}</span>단계
           </div>
           <div id='time'>
-            <span>{remainingTime}</span>초
+            {isRunning 
+            ? (<>
+                <span>{remainingTime}</span>초
+              </>) 
+            : (<>
+                <span>시간 초과!</span>
+              </>)}
           </div>
         </div>
         <div id='score'>
