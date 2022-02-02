@@ -42,6 +42,7 @@ function ColorBoard({
   score,
   setScore
 }: ColorBoardProps) {
+  const initialDifficulty = 26;
   const [colors, setColors] = useState<ColorProps[] | []>([]);
 
   function getRandomColor(): RGBProps {
@@ -57,15 +58,7 @@ function ColorBoard({
       id,
       rgb,
       onClick: () => {
-        // TODO: 음수가 안되도록, 0으로 보여주고, 바로 게임오버
-        // TODO: 상태가 반영되지 않았다.
-        // console.log(remainingTime); // 0
-        // if (remainingTime <= 3) {
-        //   setRemainingTime(0);
-        //   return;
-        // }
-
-        setRemainingTime(remainingTime => remainingTime - 3);
+        setRemainingTime(remainingTime => Math.max(0, remainingTime - 3));
       },
     }
   }
@@ -79,9 +72,9 @@ function ColorBoard({
       id: Math.random(),
       onClick: () => setStage(stage => stage + 1),
       rgb: {
-        red: red - 26 + Math.min(25, stage),
-        green: green - 26 + Math.min(25, stage),
-        blue: blue - 26 + Math.min(25, stage)
+        red: red - initialDifficulty + Math.min(initialDifficulty - 1, stage),
+        green: green - initialDifficulty + Math.min(initialDifficulty - 1, stage),
+        blue: blue - initialDifficulty + Math.min(initialDifficulty - 1, stage)
       }
     }
     newColors.push(answerColor);
@@ -89,7 +82,7 @@ function ColorBoard({
   }
 
   useEffect(() => {
-    setRemainingTime(15);
+    setRemainingTime(prev => 15);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -101,7 +94,7 @@ function ColorBoard({
     };
 
     setScore(score => score + Math.pow(stage, 3) * remainingTime);
-    setRemainingTime(15);
+    setRemainingTime(prev => 15);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage]);
 
