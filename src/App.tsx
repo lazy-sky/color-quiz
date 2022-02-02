@@ -5,7 +5,7 @@ import ColorBoard from './components/ColorBoard';
 
 function App() {
   const [stage, setStage] = useState(1);
-  const [remainingTime, setRemainingTime] = useState(0);
+  const [remainingTime, setRemainingTime] = useState(15);
   const [score, setScore] = useState(0);
   const [isRunning, setIsRunning] = useState(true);
 

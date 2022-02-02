@@ -82,18 +82,10 @@ function ColorBoard({
   }
 
   useEffect(() => {
-    setRemainingTime(prev => 15);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
     makeRandomColors();
-    if (score === 0) {
-      setScore(remainingTime);
-      return;
-    };
+    if (stage === 1) return;
 
-    setScore(score => score + Math.pow(stage, 3) * remainingTime);
+    setScore(score => score + Math.pow(stage - 1, 3) * remainingTime);
     setRemainingTime(prev => 15);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage]);
