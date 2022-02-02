@@ -37,7 +37,6 @@ function App() {
         setStage={setStage}
         remainingTime={remainingTime}
         setRemainingTime={setRemainingTime}
-        score={score}
         setScore={setScore}
       /> 
     </div>

@@ -7,7 +7,6 @@ interface ColorBoardProps {
   setStage: (stage: number | ((stage: number) => number)) => void;
   remainingTime: number;
   setRemainingTime: (remainingTime: number | ((remainingTime: number) => number)) => void;
-  score: number;
   setScore: (score: number | ((score: number) => number)) => void;
 };
 
@@ -39,8 +38,7 @@ function ColorBoard({
   setStage,
   remainingTime,
   setRemainingTime,
-  score,
-  setScore
+  setScore,
 }: ColorBoardProps) {
   const initialDifficulty = 26;
   const [colors, setColors] = useState<ColorProps[] | []>([]);
