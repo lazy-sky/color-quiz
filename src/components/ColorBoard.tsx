@@ -61,34 +61,32 @@ function ColorBoard({
     };
   };
 
-  const makeBaseColor = (id: number, rgb: RGBProps) => {
-    return {
-      id,
-      rgb,
-      onClick: handleClickWrong
-    }
-  }
+  const makeColorCell = (
+    id: number, 
+    rgb: RGBProps,
+    onClick:() => void,
+  ) => ({ id, rgb, onClick });
 
-  const makeRandomColors = () => {
+  const makeColorBoard = () => {
     const { red, green, blue } = getRandomColor();
-    const newColors = new Array(Math.pow(Math.round((stage + 0.5) / 2) + 1, 2) - 1)
+    const baseColorCells = new Array(Math.pow(Math.round((stage + 0.5) / 2) + 1, 2) - 1)
       .fill(1)
-      .map(_ => makeBaseColor(Math.random(), { red, green, blue }));
-    const answerColor = {
-      id: Math.random(),
-      onClick: handleClickAnswer,
-      rgb: {
-        red: red - initialDifficulty + Math.min(initialDifficulty - 1, stage),
+      .map(_ => makeColorCell(Math.random(), { red, green, blue }, handleClickWrong));
+    const answerColorCell = makeColorCell(
+      Math.random(), 
+      { 
+        red: red - initialDifficulty + Math.min(initialDifficulty - 1, stage), 
         green: green - initialDifficulty + Math.min(initialDifficulty - 1, stage),
         blue: blue - initialDifficulty + Math.min(initialDifficulty - 1, stage)
-      }
-    }
-    newColors.push(answerColor);
-    setColors(newColors.sort(() => (Math.random() - 0.5)));
+      }, 
+      handleClickAnswer
+    );
+    baseColorCells.push(answerColorCell);
+    setColors(baseColorCells.sort(() => (Math.random() - 0.5)));
   }
 
   useEffect(() => {
-    makeRandomColors();
+    makeColorBoard();
     if (stage === 1) return;
 
     setScore(score => score + Math.pow(stage - 1, 3) * remainingTime);
