@@ -53,7 +53,8 @@ function ScoreBoard({
     try {
       const today = new Date();
       await addDoc(collection(dbService, "scores"), {
-        createdAt: today.toLocaleString(),
+        createdAt: today.toLocaleDateString(),
+        stage,
         score,
         nickname,
       });
