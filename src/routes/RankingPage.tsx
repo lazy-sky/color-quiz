@@ -22,7 +22,7 @@ const Ranking = styled.ul`
 
   li {
     display: grid;
-    grid-template-columns: 3fr 1fr 3fr 3fr;
+    grid-template-columns: 1fr 3fr 1fr 3fr 2fr;
     margin: 8px 0;
     padding: 4px;
     border-bottom: 1px solid #FDF7FF;
@@ -44,7 +44,7 @@ function RankingPage() {
 
   const getRanks = async () => {
     // TODO: 나중에 무한 스크롤 랭킹보드로
-    const topRanks = query(collection(dbService, 'scores'), where('score', '>', 0), orderBy('score', 'desc'), limit(20));
+    const topRanks = query(collection(dbService, 'scores'), where('score', '>', 0), orderBy('score', 'desc'), limit(100));
     const documentSnapshots = await getDocs(topRanks);
 
     documentSnapshots.forEach(document => {
@@ -66,17 +66,19 @@ function RankingPage() {
         textAlign: 'center',
         margin: 0
       }}>
-        Top 20
+        Top 100
       </h1>
       <Ranking>
         <li>
+          <div>순위</div>
           <div>닉네임</div>
           <div>단계</div>
           <div>점수</div>
           <div>등록일</div>
         </li>
-        {ranks.map((rank) => (
+        {ranks.map((rank, i) => (
           <li key={rank.id}>
+            <div>{i + 1}</div>
             <div>{rank.nickname}</div>
             <div>{rank.stage}</div>
             <div>{rank.score}</div>
