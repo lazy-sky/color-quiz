@@ -6,7 +6,6 @@ function App() {
       color: '#FDF7FF',
       backgroundColor: '#19171B',
       padding: '8px',
-      height: '100vh',
     }}>
       <AppRouter />
     </div>

@@ -53,7 +53,6 @@ function ScoreBoard({
     try {
       const today = new Date();
       await addDoc(collection(dbService, "scores"), {
-        id: Math.random(),
         createdAt: today.toLocaleString(),
         score,
         nickname,
