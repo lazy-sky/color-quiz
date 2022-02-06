@@ -1,5 +1,5 @@
 import { dbService } from '../myFirebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { query, collection, getDocs, orderBy, limit } from 'firebase/firestore';
 
 import { useEffect, useState } from 'react';
 
@@ -43,9 +43,11 @@ function RankingPage() {
   const [ranks, setRanks] = useState<RankProps[]>([]);
 
   const getRanks = async () => {
-    const querySnapshot = await getDocs(collection(dbService, "scores"));
+    // TODO: 나중에 무한 스크롤 랭킹보드로
+    const topRanks = query(collection(dbService, 'scores'), orderBy('score', 'desc'), limit(20));
+    const documentSnapshots = await getDocs(topRanks);
 
-    querySnapshot.forEach(document => {
+    documentSnapshots.forEach(document => {
       const rankObject = {
         ...document.data(),
         id: document.id,
@@ -64,7 +66,7 @@ function RankingPage() {
         textAlign: 'center',
         margin: 0
       }}>
-        Ranking
+        Top 20
       </h1>
       <Ranking>
         <li>
