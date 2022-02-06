@@ -77,14 +77,14 @@ function ScoreBoard({
         title: <p>GAME OVER!</p>,
         html: `
           <style>
-            #score {
+            #alert-info {
               display: flex;
               justify-content: center;
               gap: 16px;
               margin-bottom: 12px;
             }
           </style>
-          <div id="score">
+          <div id="alert-info">
             <div>${stage}단계</div>
             <div>${score}점</div>
           </div>
@@ -97,7 +97,6 @@ function ScoreBoard({
         denyButtonColor: '#8a5acc',
       })
       .then((result) => {
-        setIsRunning(false);
         if (result.isDenied) {
           const nickname = (Swal.getPopup()?.querySelector('#nickname') as HTMLInputElement).value 
           || '익명의 참가자';
@@ -113,6 +112,7 @@ function ScoreBoard({
         || '익명의 참가자';
         onSubmit(nickname);
       });
+      setIsRunning(false);
     }
   });
 
