@@ -33,7 +33,7 @@ const Information = styled.div`
   #stage, #score, #time {
     font-size: 12px;
     span {
-      font-size: 24px;
+      font-size: 20px;
     }
   }
 `;
@@ -89,7 +89,10 @@ function ScoreBoard({
             <div>${score}점</div>
           </div>
           <div>닉네임을 입력 후 버튼을 눌러주세요!</div>
-          <input type="text" id="nickname" class="swal2-input" placeholder="익명의 참가자">
+          <input 
+            type="text" id="nickname" class="swal2-input" placeholder="익명의 참가자" 
+            style="width: 90%; margin: 16px 0 0;"
+          />
         `,
         confirmButtonText: '재도전!',
         showDenyButton: true,

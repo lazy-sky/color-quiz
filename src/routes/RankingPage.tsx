@@ -22,7 +22,7 @@ const Ranking = styled.ul`
 
   li {
     display: grid;
-    grid-template-columns: 1fr 3fr 1fr 3fr 2fr;
+    grid-template-columns: 1fr 2fr 1fr 2fr 2fr;
     margin: 8px 0;
     padding: 4px;
     border-bottom: 1px solid #FDF7FF;
@@ -30,7 +30,7 @@ const Ranking = styled.ul`
   }
 
   li:first-child {
-    font-size: larger;
+    font-weight: bold;
     background: grey;
     position: sticky;
     top: 0;
