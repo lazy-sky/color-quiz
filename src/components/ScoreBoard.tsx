@@ -1,4 +1,8 @@
+import { dbService } from '../myFirebase';
+import { addDoc, collection } from "firebase/firestore";
+
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useInterval } from '../hooks/score';
 
 import styled from 'styled-components';
@@ -44,6 +48,20 @@ function ScoreBoard({
   isRunning,
   setIsRunning
 }: ScoreBoardProps ) {
+  const navigate = useNavigate();
+  const onSubmit = async (nickname: string) => {
+    try {
+      const today = new Date();
+      await addDoc(collection(dbService, "scores"), {
+        score,
+        nickname,
+        createdAt: today.toLocaleString()
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     if (!isRunning) return;
   }, [isRunning]);
@@ -57,18 +75,43 @@ function ScoreBoard({
       MySwal.fire({
         title: <p>GAME OVER!</p>,
         html: `
-          <div>${stage}단계</div>
-          <div>${score}점</div>
+          <style>
+            #score {
+              display: flex;
+              justify-content: center;
+              gap: 16px;
+              margin-bottom: 12px;
+            }
+          </style>
+          <div id="score">
+            <div>${stage}단계</div>
+            <div>${score}점</div>
+          </div>
+          <div>닉네임을 입력 후 버튼을 눌러주세요!</div>
+          <input type="text" id="nickname" class="swal2-input" placeholder="익명의 참가자">
         `,
         confirmButtonText: '재도전!',
+        showDenyButton: true,
+        denyButtonText: '랭킹 확인!',
+        denyButtonColor: '#8a5acc',
       })
-      .then(() => {
+      .then((result) => {
+        setIsRunning(false);
+        if (result.isDenied) {
+          const nickname = (Swal.getPopup()?.querySelector('#nickname') as HTMLInputElement).value 
+          || '익명의 참가자';
+          onSubmit(nickname);
+          navigate('/rank');
+          return;
+        }
         setStage(1);
         setRemainingTime(15);
         setScore(0);
         setIsRunning(true);
+        const nickname = (Swal.getPopup()?.querySelector('#nickname') as HTMLInputElement).value 
+        || '익명의 참가자';
+        onSubmit(nickname);
       });
-      setIsRunning(false);
     }
   });
 

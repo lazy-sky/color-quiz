@@ -11,12 +11,7 @@ function HomePage() {
   const [isRunning, setIsRunning] = useState(true);
 
   return (
-    <div style={{ 
-      // color: '#FDF7FF',
-      // backgroundColor: '#19171B',
-      // padding: '8px',
-      // height: '100vh',
-    }}>
+    <>
       <h1 style={{
         textAlign: 'center',
         margin: 0
@@ -40,7 +35,7 @@ function HomePage() {
         setRemainingTime={setRemainingTime}
         setScore={setScore}
       /> 
-    </div>
+    </>
   );
 }
 
