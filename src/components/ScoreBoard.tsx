@@ -15,7 +15,7 @@ interface ScoreBoardProps {
   score: number;
   remainingTime: number;
   setRemainingTime: React.Dispatch<React.SetStateAction<number>>;
-  setScore: (score: number | ((score: number) => number)) => void;
+  setScore: React.Dispatch<React.SetStateAction<number>>;
   isRunning: boolean;
   setIsRunning: React.Dispatch<React.SetStateAction<boolean>>;
 }
