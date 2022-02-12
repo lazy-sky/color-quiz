@@ -11,13 +11,13 @@ import withReactContent from 'sweetalert2-react-content';
 
 interface ScoreBoardProps {
   stage: number;
-  setStage: (stage: number | ((stage: number) => number)) => void;
+  setStage: React.Dispatch<React.SetStateAction<number>>;
   score: number;
   remainingTime: number;
-  setRemainingTime: (remainingTime: number | ((remainingTime: number) => number)) => void;
+  setRemainingTime: React.Dispatch<React.SetStateAction<number>>;
   setScore: (score: number | ((score: number) => number)) => void;
   isRunning: boolean;
-  setIsRunning: (isRunning: boolean | ((isRunning: boolean) => boolean)) => void;
+  setIsRunning: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MySwal = withReactContent(Swal);

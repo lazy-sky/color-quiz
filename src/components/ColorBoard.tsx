@@ -3,11 +3,11 @@ import { useState } from 'react';
 
 import styled from 'styled-components';
 interface ColorBoardProps {
-  stage: number;
-  setStage: (stage: number | ((stage: number) => number)) => void;
-  remainingTime: number;
-  setRemainingTime: (remainingTime: number | ((remainingTime: number) => number)) => void;
-  setScore: (score: number | ((score: number) => number)) => void;
+  stage: number,
+  setStage: React.Dispatch<React.SetStateAction<number>>,
+  remainingTime: number,
+  setRemainingTime: React.Dispatch<React.SetStateAction<number>>,
+  setScore: React.Dispatch<React.SetStateAction<number>>,
 };
 
 interface RGBProps {
