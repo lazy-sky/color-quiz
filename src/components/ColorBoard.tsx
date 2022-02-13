@@ -40,7 +40,7 @@ function ColorBoard({
   setScore,
 }: ColorBoardProps) {
   const initialDifficulty = 26;
-  const [colors, setColors] = useState<ColorProps[] | []>([]);
+  const [colors, setColors] = useState<ColorProps[]>([]);
 
   function handleClickWrong() {
     setRemainingTime(remainingTime => Math.max(0, remainingTime - 3));
