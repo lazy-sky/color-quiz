@@ -1,31 +1,38 @@
-import { dbService } from '../myFirebase';
-import { query, collection, getDocs, orderBy, where, limit } from 'firebase/firestore';
+import { dbService } from '../myFirebase'
+import {
+  query,
+  collection,
+  getDocs,
+  orderBy,
+  where,
+  limit,
+} from 'firebase/firestore'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 interface RankProps {
-  id: string;
-  createdAt: string;
-  stage: number;
-  score: number;
-  nickname: string;
-} 
+  id: string
+  createdAt: string
+  stage: number
+  score: number
+  nickname: string
+}
 
 const Ranking = styled.ul`
   position: relative;
   list-style: none;
   margin: 12px 0;
   padding: 0;
-  border: 2px solid #FDF7FF;
+  border: 2px solid #fdf7ff;
 
   li {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr 2fr 2fr;
     margin: 8px 0;
     padding: 4px;
-    border-bottom: 1px solid #FDF7FF;
+    border-bottom: 1px solid #fdf7ff;
     text-align: center;
   }
 
@@ -39,33 +46,40 @@ const Ranking = styled.ul`
   }
 `
 
-function RankingPage() {
-  const [ranks, setRanks] = useState<RankProps[]>([]);
+const RankingPage = () => {
+  const [ranks, setRanks] = useState<RankProps[]>([])
 
   const getRanks = async () => {
     // TODO: 나중에 무한 스크롤 랭킹보드로
-    const topRanks = query(collection(dbService, 'scores'), where('score', '>', 0), orderBy('score', 'desc'), limit(100));
-    const documentSnapshots = await getDocs(topRanks);
+    const topRanks = query(
+      collection(dbService, 'scores'),
+      where('score', '>', 0),
+      orderBy('score', 'desc'),
+      limit(100)
+    )
+    const documentSnapshots = await getDocs(topRanks)
 
-    documentSnapshots.forEach(document => {
+    documentSnapshots.forEach((document) => {
       const rankObject = {
         ...document.data(),
         id: document.id,
-      } as RankProps;
-      setRanks(prev => [...prev, rankObject]);
-    });
-  };
+      } as RankProps
+      setRanks((prev) => [...prev, rankObject])
+    })
+  }
 
   useEffect(() => {
-    getRanks();
-  }, []);
+    getRanks()
+  }, [])
 
   return (
     <>
-      <h1 style={{
-        textAlign: 'center',
-        margin: 0
-      }}>
+      <h1
+        style={{
+          textAlign: 'center',
+          margin: 0,
+        }}
+      >
         Top 100
       </h1>
       <Ranking>
@@ -90,4 +104,4 @@ function RankingPage() {
   )
 }
 
-export default RankingPage;
+export default RankingPage

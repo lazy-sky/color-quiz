@@ -1,27 +1,30 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+import { useState, useEffect } from 'react'
 
-import styled from 'styled-components';
+import styled from 'styled-components'
+
 interface ColorBoardProps {
-  stage: number,
-  setStage: React.Dispatch<React.SetStateAction<number>>,
-  remainingTime: number,
-  setRemainingTime: React.Dispatch<React.SetStateAction<number>>,
-  setScore: React.Dispatch<React.SetStateAction<number>>,
-};
+  stage: number
+  setStage: React.Dispatch<React.SetStateAction<number>>
+  remainingTime: number
+  setRemainingTime: React.Dispatch<React.SetStateAction<number>>
+  setScore: React.Dispatch<React.SetStateAction<number>>
+}
 
 interface RGBProps {
-  red: number;
-  green: number;
-  blue: number;
+  red: number
+  green: number
+  blue: number
 }
 
 interface ColorProps {
-  id: number;
-  onClick: () => void;
-  rgb: RGBProps;
-};
+  id: number
+  onClick: () => void
+  rgb: RGBProps
+}
 
-const Grid = styled.ul`    
+const Grid = styled.ul`
   list-style: none;
   padding: 0;
 
@@ -30,82 +33,90 @@ const Grid = styled.ul`
   width: 300px;
   height: 300px;
   margin: 0 auto;
-`;
+`
 
-function ColorBoard({ 
-  stage, 
+const ColorBoard = ({
+  stage,
   setStage,
   remainingTime,
   setRemainingTime,
   setScore,
-}: ColorBoardProps) {
-  const initialDifficulty = 26;
-  const [colors, setColors] = useState<ColorProps[]>([]);
+}: ColorBoardProps) => {
+  const initialDifficulty = 26
+  const [colors, setColors] = useState<ColorProps[]>([])
 
   function handleClickWrong() {
-    setRemainingTime(remainingTime => Math.max(0, remainingTime - 3));
-  } 
+    setRemainingTime((prev) => Math.max(0, prev - 3))
+  }
 
   function handleClickAnswer() {
-    setStage(stage => stage + 1);
+    setStage((prev) => prev + 1)
   }
 
   function getRandomColor(): RGBProps {
     return {
-      red: Math.floor(Math.random() * 257), 
-      green: Math.floor(Math.random() * 257), 
-      blue: Math.floor(Math.random() * 257)
-    };
-  };
+      red: Math.floor(Math.random() * 257),
+      green: Math.floor(Math.random() * 257),
+      blue: Math.floor(Math.random() * 257),
+    }
+  }
 
-  const makeColorCell = (
-    id: number, 
-    rgb: RGBProps,
-    onClick:() => void,
-  ) => ({ id, rgb, onClick });
+  const makeColorCell = (id: number, rgb: RGBProps, onClick: () => void) => ({
+    id,
+    rgb,
+    onClick,
+  })
 
   const makeColorBoard = () => {
-    const { red, green, blue } = getRandomColor();
-    const baseColorCells = new Array(Math.pow(Math.round((stage + 0.5) / 2) + 1, 2) - 1)
+    const { red, green, blue } = getRandomColor()
+    const baseColorCells = new Array(
+      (Math.round((stage + 0.5) / 2) + 1) ** 2 - 1
+    )
       .fill(1)
-      .map(_ => makeColorCell(Math.random(), { red, green, blue }, handleClickWrong));
+      .map((_) =>
+        makeColorCell(Math.random(), { red, green, blue }, handleClickWrong)
+      )
     const answerColorCell = makeColorCell(
-      Math.random(), 
-      { 
-        red: red - initialDifficulty + Math.min(initialDifficulty - 1, stage), 
-        green: green - initialDifficulty + Math.min(initialDifficulty - 1, stage),
-        blue: blue - initialDifficulty + Math.min(initialDifficulty - 1, stage)
-      }, 
+      Math.random(),
+      {
+        red: red - initialDifficulty + Math.min(initialDifficulty - 1, stage),
+        green:
+          green - initialDifficulty + Math.min(initialDifficulty - 1, stage),
+        blue: blue - initialDifficulty + Math.min(initialDifficulty - 1, stage),
+      },
       handleClickAnswer
-    );
-    baseColorCells.push(answerColorCell);
-    setColors(baseColorCells.sort(() => (Math.random() - 0.5)));
+    )
+    baseColorCells.push(answerColorCell)
+    setColors(baseColorCells.sort(() => Math.random() - 0.5))
   }
 
   useEffect(() => {
-    makeColorBoard();
-    if (stage === 1) return;
+    makeColorBoard()
+    if (stage === 1) return
 
-    setScore(score => score + Math.pow(stage - 1, 3) * remainingTime);
-    setRemainingTime(prev => 15);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stage]);
+    setScore((score) => score + (stage - 1) ** 3 * remainingTime)
+    setRemainingTime((_) => 15)
+  }, [stage])
 
   return (
-    <Grid style={{ 
-      gridTemplateColumns: `repeat(${Math.round((stage + 0.5) / 2) + 1}, 1fr)`
-    }}>
+    <Grid
+      style={{
+        gridTemplateColumns: `repeat(${
+          Math.round((stage + 0.5) / 2) + 1
+        }, 1fr)`,
+      }}
+    >
       {colors?.map(({ id, onClick, rgb }) => (
-        <li 
-          key={id} 
-          style={{ 
-            backgroundColor: `rgb(${rgb.red},${rgb.green},${rgb.blue})`
+        <li
+          key={id}
+          style={{
+            backgroundColor: `rgb(${rgb.red},${rgb.green},${rgb.blue})`,
           }}
           onClick={onClick}
         />
       ))}
     </Grid>
-  );
-};
+  )
+}
 
-export default ColorBoard;
+export default ColorBoard

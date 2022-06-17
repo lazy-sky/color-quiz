@@ -1,20 +1,20 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react'
 
 export function useInterval(callback: () => void) {
-  const savedCallback = useRef(() => {});
+  const savedCallback = useRef(() => {})
 
   // 최신 함수를 기억
   useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
+    savedCallback.current = callback
+  }, [callback])
 
   // 인터벌 설정
   useEffect(() => {
     const tick = () => {
-      savedCallback.current();
+      savedCallback.current()
     }
-    
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
+
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [])
 }

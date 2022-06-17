@@ -1,15 +1,17 @@
-import AppRouter from './components/Router';
+import AppRouter from './components/Router'
 
-function App() {
+const App = () => {
   return (
-    <div style={{ 
-      color: '#FDF7FF',
-      backgroundColor: '#19171B',
-      padding: '8px',
-    }}>
+    <div
+      style={{
+        color: '#FDF7FF',
+        backgroundColor: '#19171B',
+        padding: '8px',
+      }}
+    >
       <AppRouter />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

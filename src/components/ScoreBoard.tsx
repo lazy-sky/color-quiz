@@ -1,26 +1,24 @@
-import { dbService } from '../myFirebase';
-import { addDoc, collection } from "firebase/firestore";
+import { useNavigate } from 'react-router-dom'
+import { addDoc, collection } from 'firebase/firestore'
+import styled from 'styled-components'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useInterval } from '../hooks/score';
-
-import styled from 'styled-components';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
+import { dbService } from '../myFirebase'
+import { useInterval } from '../hooks/score'
 
 interface ScoreBoardProps {
-  stage: number;
-  setStage: React.Dispatch<React.SetStateAction<number>>;
-  score: number;
-  remainingTime: number;
-  setRemainingTime: React.Dispatch<React.SetStateAction<number>>;
-  setScore: React.Dispatch<React.SetStateAction<number>>;
-  isRunning: boolean;
-  setIsRunning: React.Dispatch<React.SetStateAction<boolean>>;
+  stage: number
+  setStage: React.Dispatch<React.SetStateAction<number>>
+  score: number
+  remainingTime: number
+  setRemainingTime: React.Dispatch<React.SetStateAction<number>>
+  setScore: React.Dispatch<React.SetStateAction<number>>
+  isRunning: boolean
+  setIsRunning: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const MySwal = withReactContent(Swal);
+const MySwal = withReactContent(Swal)
 
 const Information = styled.div`
   display: flex;
@@ -30,46 +28,40 @@ const Information = styled.div`
   gap: 12px;
   margin-bottom: 12px;
 
-  #stage, #score, #time {
+  #stage,
+  #score,
+  #time {
     font-size: 12px;
     span {
       font-size: 20px;
     }
   }
-`;
+`
 
-function ScoreBoard({ 
+const ScoreBoard = ({
   stage,
   setStage,
-  score, 
-  remainingTime, 
+  score,
+  remainingTime,
   setRemainingTime,
   setScore,
   isRunning,
-  setIsRunning
-}: ScoreBoardProps ) {
-  const navigate = useNavigate();
+  setIsRunning,
+}: ScoreBoardProps) => {
+  const navigate = useNavigate()
   const onSubmit = async (nickname: string) => {
-    try {
-      const today = new Date();
-      await addDoc(collection(dbService, "scores"), {
-        createdAt: today.toLocaleDateString(),
-        stage,
-        score,
-        nickname,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    if (!isRunning) return;
-  }, [isRunning]);
+    const today = new Date()
+    await addDoc(collection(dbService, 'scores'), {
+      createdAt: today.toLocaleDateString(),
+      stage,
+      score,
+      nickname,
+    })
+  }
 
   useInterval(() => {
     if (isRunning) {
-      setRemainingTime(count => count - 1);
+      setRemainingTime((count) => count - 1)
     }
 
     if (remainingTime === 0) {
@@ -98,26 +90,27 @@ function ScoreBoard({
         showDenyButton: true,
         denyButtonText: '랭킹 확인!',
         denyButtonColor: '#8a5acc',
-      })
-      .then((result) => {
+      }).then((result) => {
         if (result.isDenied) {
-          const nickname = (Swal.getPopup()?.querySelector('#nickname') as HTMLInputElement).value 
-          || '익명의 참가자';
-          onSubmit(nickname);
-          navigate('/rank');
-          return;
+          const nickname =
+            (Swal.getPopup()?.querySelector('#nickname') as HTMLInputElement)
+              .value || '익명의 참가자'
+          onSubmit(nickname)
+          navigate('/rank')
+          return
         }
-        setStage(1);
-        setRemainingTime(15);
-        setScore(0);
-        setIsRunning(true);
-        const nickname = (Swal.getPopup()?.querySelector('#nickname') as HTMLInputElement).value 
-        || '익명의 참가자';
-        onSubmit(nickname);
-      });
-      setIsRunning(false);
+        setStage(1)
+        setRemainingTime(15)
+        setScore(0)
+        setIsRunning(true)
+        const nickname =
+          (Swal.getPopup()?.querySelector('#nickname') as HTMLInputElement)
+            .value || '익명의 참가자'
+        onSubmit(nickname)
+      })
+      setIsRunning(false)
     }
-  });
+  })
 
   return (
     <Information>
@@ -126,20 +119,20 @@ function ScoreBoard({
           <span>{stage}</span>단계
         </div>
         <div id='time'>
-          {isRunning 
-          ? (<>
+          {isRunning ? (
+            <>
               <span>{remainingTime}</span>초
-            </>) 
-          : (<>
-              <span>시간 초과!</span>
-            </>)}
+            </>
+          ) : (
+            <span>시간 초과!</span>
+          )}
         </div>
       </div>
       <div id='score'>
         <span>{score}</span>점
       </div>
     </Information>
-  );
-};
+  )
+}
 
-export default ScoreBoard;
+export default ScoreBoard
