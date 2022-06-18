@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import { useState, useEffect } from 'react'
 
 import styled from 'styled-components'
@@ -33,6 +32,12 @@ const Grid = styled.ul`
   width: 300px;
   height: 300px;
   margin: 0 auto;
+`
+
+const CellButton = styled.button`
+  width: 100%;
+  height: 100%;
+  background-color: inherit;
 `
 
 const ColorBoard = ({
@@ -106,14 +111,15 @@ const ColorBoard = ({
         }, 1fr)`,
       }}
     >
-      {colors?.map(({ id, onClick, rgb }) => (
+      {colors.map(({ id, onClick, rgb }) => (
         <li
           key={id}
           style={{
             backgroundColor: `rgb(${rgb.red},${rgb.green},${rgb.blue})`,
           }}
-          onClick={onClick}
-        />
+        >
+          <CellButton type='button' aria-label='color' onClick={onClick} />
+        </li>
       ))}
     </Grid>
   )
