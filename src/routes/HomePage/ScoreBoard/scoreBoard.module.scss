@@ -1,0 +1,15 @@
+.scoreBoard {
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+  margin: 0 auto;
+  margin-bottom: 12px;
+
+  > div {
+    font-size: 16px;
+
+    span {
+      font-size: 24px;
+    }
+  }
+}

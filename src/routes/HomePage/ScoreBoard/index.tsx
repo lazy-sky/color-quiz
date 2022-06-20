@@ -3,30 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { addDoc, collection } from 'firebase/firestore'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import styled from 'styled-components'
 
 import { dbService } from '../../../myFirebase'
 import { useScore, useStage, useTimer } from 'hooks'
 
+import styles from './scoreBoard.module.scss'
+
 const MySwal = withReactContent(Swal)
-
-const Information = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 300px;
-  margin: 0 auto;
-  gap: 12px;
-  margin-bottom: 12px;
-
-  #stage,
-  #score,
-  #time {
-    font-size: 12px;
-    span {
-      font-size: 20px;
-    }
-  }
-`
 
 const ScoreBoard = () => {
   const navigate = useNavigate()
@@ -109,7 +92,7 @@ const ScoreBoard = () => {
   ])
 
   return (
-    <Information>
+    <div className={styles.scoreBoard}>
       <div>
         <div id='stage'>
           <span>{stage}</span>단계
@@ -127,7 +110,7 @@ const ScoreBoard = () => {
       <div id='score'>
         <span>{score}</span>점
       </div>
-    </Information>
+    </div>
   )
 }
 
