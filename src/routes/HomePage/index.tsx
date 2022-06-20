@@ -3,15 +3,12 @@ import ColorBoard from './ColorBoard'
 
 const HomePage = () => {
   return (
-    <div
-      style={{
-        height: '100vh',
-      }}
-    >
+    <div>
       <h1
         style={{
           textAlign: 'center',
-          margin: 0,
+          fontSize: '36px',
+          margin: '20px auto',
         }}
       >
         Color Quiz

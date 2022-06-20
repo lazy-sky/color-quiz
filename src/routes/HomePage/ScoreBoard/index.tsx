@@ -93,22 +93,20 @@ const ScoreBoard = () => {
 
   return (
     <div className={styles.scoreBoard}>
-      <div>
-        <div id='stage'>
-          <span>{stage}</span>단계
-        </div>
-        <div id='time'>
-          {remainTime > 0 ? (
-            <>
-              <span>{remainTime}</span>초
-            </>
-          ) : (
-            <span>시간 초과!</span>
-          )}
-        </div>
+      <div id='stage'>
+        <span>{stage}</span>단계
       </div>
       <div id='score'>
         <span>{score}</span>점
+      </div>
+      <div id='time'>
+        {remainTime > 0 ? (
+          <>
+            <span>{remainTime}</span>초
+          </>
+        ) : (
+          <span>시간 초과!</span>
+        )}
       </div>
     </div>
   )

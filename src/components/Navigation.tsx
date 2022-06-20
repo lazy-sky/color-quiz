@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 const NavConatainer = styled.nav`
+  margin-top: 16px;
+
   ul {
     list-style: none;
     display: flex;
     justify-content: center;
     gap: 24px;
-    padding: 0;
 
     a {
       font-size: 24px;
