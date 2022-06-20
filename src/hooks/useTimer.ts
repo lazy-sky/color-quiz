@@ -27,7 +27,7 @@ const useTimer = () => {
   }, [setRemainTime])
 
   const minusTime = useCallback(() => {
-    setRemainTime((prev) => prev - 3)
+    setRemainTime((prev) => Math.max(prev - 3, 0))
   }, [setRemainTime])
 
   return { remainTime, startTimer, stopTimer, resetTimer, minusTime }
