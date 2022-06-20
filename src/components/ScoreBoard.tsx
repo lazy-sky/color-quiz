@@ -1,19 +1,14 @@
+import { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { addDoc, collection } from 'firebase/firestore'
-import styled from 'styled-components'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import styled from 'styled-components'
 
 import { dbService } from '../myFirebase'
-import { useInterval } from '../hooks/score'
+import { useScore, useStage, useTimer } from 'hooks'
 
 interface ScoreBoardProps {
-  stage: number
-  setStage: React.Dispatch<React.SetStateAction<number>>
-  score: number
-  remainingTime: number
-  setRemainingTime: React.Dispatch<React.SetStateAction<number>>
-  setScore: React.Dispatch<React.SetStateAction<number>>
   isRunning: boolean
   setIsRunning: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -38,33 +33,27 @@ const Information = styled.div`
   }
 `
 
-const ScoreBoard = ({
-  stage,
-  setStage,
-  score,
-  remainingTime,
-  setRemainingTime,
-  setScore,
-  isRunning,
-  setIsRunning,
-}: ScoreBoardProps) => {
+const ScoreBoard = ({ isRunning, setIsRunning }: ScoreBoardProps) => {
   const navigate = useNavigate()
-  const onSubmit = async (nickname: string) => {
-    const today = new Date()
-    await addDoc(collection(dbService, 'scores'), {
-      createdAt: today.toLocaleDateString(),
-      stage,
-      score,
-      nickname,
-    })
-  }
+  const { stage, resetStage } = useStage()
+  const { remainTime, startTimer, stopTimer, resetTimer } = useTimer()
+  const { score, resetScore } = useScore()
 
-  useInterval(() => {
-    if (isRunning) {
-      setRemainingTime((count) => count - 1)
-    }
+  const onSubmit = useCallback(
+    async (nickname: string) => {
+      const today = new Date()
+      await addDoc(collection(dbService, 'scores'), {
+        createdAt: today.toLocaleDateString(),
+        stage,
+        score,
+        nickname,
+      })
+    },
+    [score, stage]
+  )
 
-    if (remainingTime === 0) {
+  useEffect(() => {
+    if (remainTime === 0) {
       MySwal.fire({
         title: <p>GAME OVER!</p>,
         html: `
@@ -81,8 +70,8 @@ const ScoreBoard = ({
             <div>${score}점</div>
           </div>
           <div>닉네임을 입력 후 버튼을 눌러주세요!</div>
-          <input 
-            type="text" id="nickname" class="swal2-input" placeholder="익명의 참가자" 
+          <input
+            type="text" id="nickname" class="swal2-input" placeholder="익명의 참가자"
             style="width: 90%; margin: 16px 0 0;"
           />
         `,
@@ -99,9 +88,9 @@ const ScoreBoard = ({
           navigate('/rank')
           return
         }
-        setStage(1)
-        setRemainingTime(15)
-        setScore(0)
+        resetStage()
+        resetTimer()
+        resetScore()
         setIsRunning(true)
         const nickname =
           (Swal.getPopup()?.querySelector('#nickname') as HTMLInputElement)
@@ -110,7 +99,21 @@ const ScoreBoard = ({
       })
       setIsRunning(false)
     }
-  })
+    startTimer()
+    return () => stopTimer()
+  }, [
+    navigate,
+    onSubmit,
+    remainTime,
+    resetScore,
+    resetStage,
+    resetTimer,
+    score,
+    setIsRunning,
+    stage,
+    startTimer,
+    stopTimer,
+  ])
 
   return (
     <Information>
@@ -121,7 +124,7 @@ const ScoreBoard = ({
         <div id='time'>
           {isRunning ? (
             <>
-              <span>{remainingTime}</span>초
+              <span>{remainTime}</span>초
             </>
           ) : (
             <span>시간 초과!</span>

@@ -1,15 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from 'react'
-
+import { useState, useEffect, useCallback, memo } from 'react'
 import styled from 'styled-components'
 
-interface ColorBoardProps {
-  stage: number
-  setStage: React.Dispatch<React.SetStateAction<number>>
-  remainingTime: number
-  setRemainingTime: React.Dispatch<React.SetStateAction<number>>
-  setScore: React.Dispatch<React.SetStateAction<number>>
-}
+import { useScore, useStage, useTimer } from 'hooks'
 
 interface RGBProps {
   red: number
@@ -26,7 +18,6 @@ interface ColorProps {
 const Grid = styled.ul`
   list-style: none;
   padding: 0;
-
   display: grid;
   gap: 4px;
   width: 300px;
@@ -39,26 +30,23 @@ const CellButton = styled.button`
   height: 100%;
   background-color: inherit;
 `
+const initialDifficulty = 26
 
-const ColorBoard = ({
-  stage,
-  setStage,
-  remainingTime,
-  setRemainingTime,
-  setScore,
-}: ColorBoardProps) => {
-  const initialDifficulty = 26
+const ColorBoard = () => {
+  const { remainTime, resetTimer, minusTime } = useTimer()
   const [colors, setColors] = useState<ColorProps[]>([])
+  const { updateScore } = useScore()
+  const { stage, clearStage } = useStage()
 
-  function handleClickWrong() {
-    setRemainingTime((prev) => Math.max(0, prev - 3))
-  }
+  const handleClickWrong = useCallback(() => {
+    minusTime()
+  }, [minusTime])
 
-  function handleClickAnswer() {
-    setStage((prev) => prev + 1)
-  }
+  const handleClickAnswer = useCallback(() => {
+    clearStage()
+  }, [clearStage])
 
-  function getRandomColor(): RGBProps {
+  const getRandomColor = () => {
     return {
       red: Math.floor(Math.random() * 257),
       green: Math.floor(Math.random() * 257),
@@ -72,8 +60,9 @@ const ColorBoard = ({
     onClick,
   })
 
-  const makeColorBoard = () => {
+  const makeColorBoard = useCallback(() => {
     const { red, green, blue } = getRandomColor()
+
     const baseColorCells = new Array(
       (Math.round((stage + 0.5) / 2) + 1) ** 2 - 1
     )
@@ -81,6 +70,7 @@ const ColorBoard = ({
       .map((_) =>
         makeColorCell(Math.random(), { red, green, blue }, handleClickWrong)
       )
+
     const answerColorCell = makeColorCell(
       Math.random(),
       {
@@ -93,15 +83,17 @@ const ColorBoard = ({
     )
     baseColorCells.push(answerColorCell)
     setColors(baseColorCells.sort(() => Math.random() - 0.5))
-  }
+  }, [handleClickAnswer, handleClickWrong, stage])
 
   useEffect(() => {
     makeColorBoard()
     if (stage === 1) return
 
-    setScore((score) => score + (stage - 1) ** 3 * remainingTime)
-    setRemainingTime((_) => 15)
-  }, [stage])
+    updateScore(stage, remainTime)
+    resetTimer()
+    // TODO: 의존성에 remainTime을 추가하면 매초마다 새로운 컬러보드가 렌더링되는 문제가 발생한다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [makeColorBoard, resetTimer, stage, updateScore])
 
   return (
     <Grid
@@ -125,4 +117,4 @@ const ColorBoard = ({
   )
 }
 
-export default ColorBoard
+export default memo(ColorBoard)
