@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, memo } from 'react'
-import styled from 'styled-components'
 
 import { useScore, useStage, useTimer } from 'hooks'
+
+import styles from './colorBoard.module.scss'
 
 interface RGBProps {
   red: number
@@ -15,26 +16,11 @@ interface ColorProps {
   rgb: RGBProps
 }
 
-const Grid = styled.ul`
-  list-style: none;
-  padding: 0;
-  display: grid;
-  gap: 4px;
-  width: 300px;
-  height: 300px;
-  margin: 0 auto;
-`
-
-const CellButton = styled.button`
-  width: 100%;
-  height: 100%;
-  background-color: inherit;
-`
 const initialDifficulty = 26
 
 const ColorBoard = () => {
-  const { remainTime, resetTimer, minusTime } = useTimer()
   const [colors, setColors] = useState<ColorProps[]>([])
+  const { remainTime, resetTimer, minusTime } = useTimer()
   const { updateScore } = useScore()
   const { stage, clearStage } = useStage()
 
@@ -54,8 +40,8 @@ const ColorBoard = () => {
     }
   }
 
-  const makeColorCell = (id: number, rgb: RGBProps, onClick: () => void) => ({
-    id,
+  const makeColorCell = (rgb: RGBProps, onClick: () => void) => ({
+    id: Math.random(),
     rgb,
     onClick,
   })
@@ -67,12 +53,9 @@ const ColorBoard = () => {
       (Math.round((stage + 0.5) / 2) + 1) ** 2 - 1
     )
       .fill(1)
-      .map((_) =>
-        makeColorCell(Math.random(), { red, green, blue }, handleClickWrong)
-      )
+      .map((_) => makeColorCell({ red, green, blue }, handleClickWrong))
 
     const answerColorCell = makeColorCell(
-      Math.random(),
       {
         red: red - initialDifficulty + Math.min(initialDifficulty - 1, stage),
         green:
@@ -96,7 +79,8 @@ const ColorBoard = () => {
   }, [makeColorBoard, resetTimer, stage, updateScore])
 
   return (
-    <Grid
+    <ul
+      className={styles.grid}
       style={{
         gridTemplateColumns: `repeat(${
           Math.round((stage + 0.5) / 2) + 1
@@ -110,10 +94,10 @@ const ColorBoard = () => {
             backgroundColor: `rgb(${rgb.red},${rgb.green},${rgb.blue})`,
           }}
         >
-          <CellButton type='button' aria-label='color' onClick={onClick} />
+          <button type='button' aria-label='color' onClick={onClick} />
         </li>
       ))}
-    </Grid>
+    </ul>
   )
 }
 
