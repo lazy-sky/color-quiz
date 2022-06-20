@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-import ScoreBoard from '../components/ScoreBoard'
-import ColorBoard from '../components/ColorBoard'
+import ScoreBoard from '../../components/ScoreBoard'
+import ColorBoard from '../../components/ColorBoard'
 
 const HomePage = () => {
   const [isRunning, setIsRunning] = useState(true)

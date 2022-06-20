@@ -1,4 +1,5 @@
-import { dbService } from '../myFirebase'
+import { useEffect, useState } from 'react'
+import styled from 'styled-components'
 import {
   query,
   collection,
@@ -8,9 +9,7 @@ import {
   limit,
 } from 'firebase/firestore'
 
-import { useEffect, useState } from 'react'
-
-import styled from 'styled-components'
+import { dbService } from 'myFirebase'
 
 interface RankProps {
   id: string
