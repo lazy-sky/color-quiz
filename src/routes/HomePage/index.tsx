@@ -1,11 +1,7 @@
-import { useState } from 'react'
-
 import ScoreBoard from './ScoreBoard'
 import ColorBoard from './ColorBoard'
 
 const HomePage = () => {
-  const [isRunning, setIsRunning] = useState(true)
-
   return (
     <div
       style={{
@@ -20,7 +16,7 @@ const HomePage = () => {
       >
         Color Quiz
       </h1>
-      <ScoreBoard isRunning={isRunning} setIsRunning={setIsRunning} />
+      <ScoreBoard />
       <ColorBoard />
     </div>
   )

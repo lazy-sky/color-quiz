@@ -8,11 +8,6 @@ import styled from 'styled-components'
 import { dbService } from '../../../myFirebase'
 import { useScore, useStage, useTimer } from 'hooks'
 
-interface ScoreBoardProps {
-  isRunning: boolean
-  setIsRunning: React.Dispatch<React.SetStateAction<boolean>>
-}
-
 const MySwal = withReactContent(Swal)
 
 const Information = styled.div`
@@ -33,7 +28,7 @@ const Information = styled.div`
   }
 `
 
-const ScoreBoard = ({ isRunning, setIsRunning }: ScoreBoardProps) => {
+const ScoreBoard = () => {
   const navigate = useNavigate()
   const { stage, resetStage } = useStage()
   const { remainTime, startTimer, stopTimer, resetTimer } = useTimer()
@@ -91,13 +86,12 @@ const ScoreBoard = ({ isRunning, setIsRunning }: ScoreBoardProps) => {
         resetStage()
         resetTimer()
         resetScore()
-        setIsRunning(true)
+
         const nickname =
           (Swal.getPopup()?.querySelector('#nickname') as HTMLInputElement)
             .value || '익명의 참가자'
         onSubmit(nickname)
       })
-      setIsRunning(false)
     }
     startTimer()
     return () => stopTimer()
@@ -109,7 +103,6 @@ const ScoreBoard = ({ isRunning, setIsRunning }: ScoreBoardProps) => {
     resetStage,
     resetTimer,
     score,
-    setIsRunning,
     stage,
     startTimer,
     stopTimer,
@@ -122,7 +115,7 @@ const ScoreBoard = ({ isRunning, setIsRunning }: ScoreBoardProps) => {
           <span>{stage}</span>단계
         </div>
         <div id='time'>
-          {isRunning ? (
+          {remainTime > 0 ? (
             <>
               <span>{remainTime}</span>초
             </>
