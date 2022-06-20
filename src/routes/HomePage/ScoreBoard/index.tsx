@@ -5,7 +5,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import styled from 'styled-components'
 
-import { dbService } from '../myFirebase'
+import { dbService } from '../../../myFirebase'
 import { useScore, useStage, useTimer } from 'hooks'
 
 interface ScoreBoardProps {
