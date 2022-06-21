@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, memo } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { usePrevious } from 'react-use'
 
 import { useScore, useStage, useTimer } from 'hooks'
 
@@ -23,6 +24,7 @@ const ColorBoard = () => {
   const { remainTime, resetTimer, minusTime } = useTimer()
   const { updateScore } = useScore()
   const { stage, clearStage } = useStage()
+  const prevStage = usePrevious(stage)
 
   const handleClickWrong = useCallback(() => {
     minusTime()
@@ -69,14 +71,12 @@ const ColorBoard = () => {
   }, [handleClickAnswer, handleClickWrong, stage])
 
   useEffect(() => {
+    if (stage === prevStage) return
     makeColorBoard()
     if (stage === 1) return
-
     updateScore(stage, remainTime)
     resetTimer()
-    // TODO: 의존성에 remainTime을 추가하면 매초마다 새로운 컬러보드가 렌더링되는 문제가 발생한다.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [makeColorBoard, resetTimer, stage, updateScore])
+  }, [makeColorBoard, prevStage, remainTime, resetTimer, stage, updateScore])
 
   return (
     <ul
@@ -101,4 +101,4 @@ const ColorBoard = () => {
   )
 }
 
-export default memo(ColorBoard)
+export default ColorBoard
