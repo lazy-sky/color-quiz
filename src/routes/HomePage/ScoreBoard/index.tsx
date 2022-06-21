@@ -8,6 +8,7 @@ import { dbService } from '../../../myFirebase'
 import { useScore, useStage, useTimer } from 'hooks'
 
 import styles from './scoreBoard.module.scss'
+import Score from './Score'
 
 const MySwal = withReactContent(Swal)
 
@@ -96,8 +97,8 @@ const ScoreBoard = () => {
       <div id='stage'>
         <span>{stage}</span>단계
       </div>
-      <div id='score'>
-        <span>{score}</span>점
+      <div id='score' className={styles.score}>
+        <Score score={score} />점
       </div>
       <div id='time'>
         {remainTime > 0 ? (

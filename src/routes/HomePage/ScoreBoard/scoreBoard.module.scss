@@ -13,4 +13,10 @@
       font-size: 24px;
     }
   }
+
+  .score {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+  }
 }
