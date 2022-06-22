@@ -1,18 +1,11 @@
+import PageHeader from 'components/PageHeader'
 import ScoreBoard from './ScoreBoard'
 import ColorBoard from './ColorBoard'
 
 const HomePage = () => {
   return (
     <div>
-      <h1
-        style={{
-          textAlign: 'center',
-          fontSize: '36px',
-          margin: '20px auto',
-        }}
-      >
-        Color Quiz
-      </h1>
+      <PageHeader title='Color Quiz' />
       <ScoreBoard />
       <ColorBoard />
     </div>

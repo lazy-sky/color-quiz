@@ -73,7 +73,6 @@ const ColorBoard = () => {
   useEffect(() => {
     if (stage === prevStage) return
     makeColorBoard()
-    if (stage === 1) return
     updateScore(stage, remainTime)
     resetTimer()
   }, [makeColorBoard, prevStage, remainTime, resetTimer, stage, updateScore])

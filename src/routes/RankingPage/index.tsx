@@ -8,6 +8,7 @@ import {
   where,
   limit,
 } from 'firebase/firestore'
+import PageHeader from 'components/PageHeader'
 
 import { dbService } from 'myFirebase'
 
@@ -73,14 +74,7 @@ const RankingPage = () => {
 
   return (
     <>
-      <h1
-        style={{
-          textAlign: 'center',
-          margin: 0,
-        }}
-      >
-        Top 100
-      </h1>
+      <PageHeader title='Top 100' />
       <Ranking>
         <li>
           <div>순위</div>
