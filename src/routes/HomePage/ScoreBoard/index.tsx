@@ -6,9 +6,10 @@ import withReactContent from 'sweetalert2-react-content'
 
 import { dbService } from 'myFirebase'
 import { useScore, useStage, useTimer } from 'hooks'
+import Score from './Score'
 
 import styles from './scoreBoard.module.scss'
-import Score from './Score'
+import { usePrevious } from 'react-use'
 
 const MySwal = withReactContent(Swal)
 
@@ -17,8 +18,9 @@ const ScoreBoard = () => {
   const { stage, resetStage } = useStage()
   const { remainTime, startTimer, stopTimer, resetTimer } = useTimer()
   const { score, resetScore } = useScore()
+  const previousTime = usePrevious(remainTime)
 
-  const onSubmit = useCallback(
+  const submitScore = useCallback(
     async (nickname: string) => {
       const today = new Date()
       await addDoc(collection(dbService, 'scores'), {
@@ -31,20 +33,26 @@ const ScoreBoard = () => {
     [score, stage]
   )
 
+  const resetGame = useCallback(() => {
+    resetStage()
+    resetTimer()
+    resetScore()
+  }, [resetScore, resetStage, resetTimer])
+
   useEffect(() => {
-    if (remainTime === 0) {
+    if (remainTime === 0 && previousTime !== 0) {
       MySwal.fire({
         title: <p>GAME OVER!</p>,
         html: `
           <style>
-            #alert-info {
+            .alert-info {
               display: flex;
               justify-content: center;
               gap: 16px;
               margin-bottom: 12px;
             }
           </style>
-          <div id="alert-info">
+          <div class="alert-info">
             <div>${stage}단계</div>
             <div>${score}점</div>
           </div>
@@ -58,56 +66,56 @@ const ScoreBoard = () => {
         showDenyButton: true,
         denyButtonText: '랭킹 확인!',
         denyButtonColor: '#8a5acc',
-      }).then((result) => {
-        if (result.isDenied) {
-          const nickname =
-            (Swal.getPopup()?.querySelector('#nickname') as HTMLInputElement)
-              .value || '익명의 참가자'
-          onSubmit(nickname)
-          navigate('/rank')
-          return
-        }
-        resetStage()
-        resetTimer()
-        resetScore()
-
+      }).then(({ isDismissed, isDenied }) => {
         const nickname =
           (Swal.getPopup()?.querySelector('#nickname') as HTMLInputElement)
             .value || '익명의 참가자'
-        onSubmit(nickname)
+
+        // 팝업 바깥 클릭
+        if (isDismissed) {
+          resetGame()
+          return
+        }
+
+        submitScore(nickname)
+        resetGame()
+
+        // '랭킹 확인' 클릭
+        if (isDenied) {
+          navigate('/rank')
+          return
+        }
+
+        // '재도전' 클릭
+        submitScore(nickname)
+        resetGame()
       })
     }
+
     startTimer()
     return () => stopTimer()
   }, [
     navigate,
-    onSubmit,
     remainTime,
-    resetScore,
-    resetStage,
-    resetTimer,
+    previousTime,
+    resetGame,
     score,
     stage,
     startTimer,
     stopTimer,
+    submitScore,
   ])
 
   return (
     <div className={styles.scoreBoard}>
-      <div id='stage'>
+      <div>
         <span>{stage}</span>단계
       </div>
-      <div id='score' className={styles.score}>
+      <div className={styles.score}>
         <Score score={score} />점
       </div>
-      <div id='time'>
-        {remainTime > 0 ? (
-          <>
-            <span>{remainTime}</span>초
-          </>
-        ) : (
-          <span>시간 초과!</span>
-        )}
+      <div>
+        {remainTime > 0 ? <span>{remainTime}초</span> : <span>시간 초과!</span>}
       </div>
     </div>
   )
