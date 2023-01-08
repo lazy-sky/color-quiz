@@ -88,7 +88,7 @@ const RankingPage = () => {
             <div>{i + 1}</div>
             <div>{rank.nickname}</div>
             <div>{rank.stage}</div>
-            <div>{rank.score}</div>
+            <div>{rank.score.toLocaleString()}</div>
             <div>{rank.createdAt}</div>
           </li>
         ))}

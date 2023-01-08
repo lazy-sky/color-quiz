@@ -54,7 +54,7 @@ const ScoreBoard = () => {
           </style>
           <div class="alert-info">
             <div>${stage}단계</div>
-            <div>${score}점</div>
+            <div>${score.toLocaleString()}점</div>
           </div>
           <div>닉네임을 입력 후 버튼을 눌러주세요!</div>
           <input
