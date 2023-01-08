@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePrevious, useUnmount } from 'react-use'
 import { addDoc, collection } from 'firebase/firestore'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -9,7 +10,6 @@ import { useScore, useStage, useTimer } from 'hooks'
 import Score from './Score'
 
 import styles from './scoreBoard.module.scss'
-import { usePrevious } from 'react-use'
 
 const MySwal = withReactContent(Swal)
 
@@ -105,6 +105,11 @@ const ScoreBoard = () => {
     stopTimer,
     submitScore,
   ])
+
+  useUnmount(() => {
+    resetStage()
+    resetScore()
+  })
 
   return (
     <div className={styles.scoreBoard}>
