@@ -42,42 +42,49 @@ const ScoreBoard = () => {
     resetStage()
     resetTimer()
     resetScore()
-    setIsGameOver(false)
-  }, [resetScore, resetStage, resetTimer])
+    startTimer()
+  }, [resetScore, resetStage, resetTimer, startTimer])
 
   const handleRetry = async () => {
-    await submitScore(nickname)
-    resetGame()
+    try {
+      // await submitScore(nickname)
+      setIsGameOver(false)
+      setTimeout(() => {
+        resetGame()
+      }, 100)
+    } catch (error) {
+      console.error('Error submitting score:', error)
+    }
   }
 
   const handleRanking = async () => {
-    await submitScore(nickname)
-    resetGame()
-    navigate('/rank')
+    try {
+      await submitScore(nickname)
+      setIsGameOver(false)
+      navigate('/rank')
+    } catch (error) {
+      console.error('Error submitting score:', error)
+    }
   }
 
   useEffect(() => {
     if (remainTime === 0 && previousTime !== 0) {
+      stopTimer()
       setIsGameOver(true)
     }
+  }, [remainTime, previousTime, stopTimer])
 
-    startTimer()
+  useEffect(() => {
+    if (!isGameOver) {
+      startTimer()
+    }
     return () => stopTimer()
-  }, [
-    navigate,
-    remainTime,
-    previousTime,
-    resetGame,
-    score,
-    stage,
-    startTimer,
-    stopTimer,
-    submitScore,
-  ])
+  }, [isGameOver, startTimer, stopTimer])
 
   useUnmount(() => {
     resetStage()
     resetScore()
+    stopTimer()
   })
 
   return (
@@ -121,8 +128,8 @@ const ScoreBoard = () => {
               </div>
           </div>
 
-          <Dialog open={isGameOver} onOpenChange={setIsGameOver}>
-              <DialogContent className="sm:max-w-md">
+          <Dialog open={isGameOver} onOpenChange={() => {}}>
+              <DialogContent className="sm:max-w-md" hideClose>
                   <DialogHeader>
                       <DialogTitle className="text-2xl text-center">GAME OVER!</DialogTitle>
                       <DialogDescription className="text-center">
