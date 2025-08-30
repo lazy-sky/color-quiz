@@ -1,39 +1,29 @@
 import { useEffect, useState } from 'react'
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  limit,
-} from 'firebase/firestore'
 import { motion } from 'framer-motion'
 
-import { dbService } from '@/lib/firebase'
-
-interface RankProps {
-  id: string
-  nickname: string
-  stage: number
-  score: number
-  createdAt: string
-}
+import { supabase } from '@/lib/supabase'
+import type { Score } from '@/lib/supabase'
 
 const RankingPage = () => {
-  const [ranks, setRanks] = useState<RankProps[]>([])
+  const [ranks, setRanks] = useState<Score[]>([])
 
   useEffect(() => {
     const getRanks = async () => {
-      const q = query(
-        collection(dbService, 'scores'),
-        orderBy('score', 'desc'),
-        limit(10)
-      )
-      const querySnapshot = await getDocs(q)
-      const rankData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as RankProps[]
-      setRanks(rankData)
+      try {
+        const { data, error } = await supabase
+          .from('scores')
+          .select('*')
+          .order('score', { ascending: false })
+          .limit(10)
+
+        if (error) {
+          throw error
+        }
+
+        setRanks(data || [])
+      } catch (error) {
+        console.error('Error fetching ranks:', error)
+      }
     }
 
     getRanks()
@@ -67,7 +57,7 @@ const RankingPage = () => {
                                   {rank.stage}
                                   <span className="text-xs text-gray-500 ml-1">단계</span>
                               </div>
-                              <div className="text-right font-medium text-primary">
+                              <div className="text-right font-medium">
                                   {rank.score.toLocaleString()}
                               </div>
                           </motion.div>

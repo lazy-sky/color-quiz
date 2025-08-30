@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePrevious, useUnmount } from 'react-use'
-import { addDoc, collection } from 'firebase/firestore'
 import { motion } from 'framer-motion'
 
-import { dbService } from '@/lib/firebase'
+import { supabase } from '@/lib/supabase'
 import { useScore, useStage, useTimer } from '@/hooks'
 import Score from './Score'
 import {
@@ -27,13 +26,20 @@ const ScoreBoard = () => {
 
   const submitScore = useCallback(
     async (nickname: string) => {
-      const today = new Date()
-      await addDoc(collection(dbService, 'scores'), {
-        createdAt: today.toLocaleDateString(),
-        stage,
-        score,
-        nickname,
-      })
+      try {
+        const { error } = await supabase.from('scores').insert({
+          created_at: new Date().toISOString(),
+          nickname,
+          stage,
+          score,
+        })
+
+        if (error) {
+          throw error
+        }
+      } catch (error) {
+        console.error('Error submitting score:', error)
+      }
     },
     [score, stage]
   )
