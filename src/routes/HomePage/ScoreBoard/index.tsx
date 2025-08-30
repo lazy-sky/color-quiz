@@ -47,7 +47,7 @@ const ScoreBoard = () => {
 
   const handleRetry = async () => {
     try {
-      // await submitScore(nickname)
+      await submitScore(nickname)
       setIsGameOver(false)
       setTimeout(() => {
         resetGame()

@@ -41,7 +41,6 @@
     "import/order": "off",
     "import/no-anonymous-default-export": "off",
     "import/no-extraneous-dependencies": "off",
-    "max-lines": ["warn", 150],
     "no-param-reassign": ["error", { "props": false }],
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
