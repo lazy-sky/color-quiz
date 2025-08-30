@@ -1,39 +1,34 @@
-import { Link } from 'react-router-dom'
-
-import styled from 'styled-components'
-
-const NavConatainer = styled.nav`
-  margin-top: 16px;
-
-  ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-
-    a {
-      font-size: 24px;
-      text-decoration: none;
-    }
-  }
-`
+import { Link, useLocation } from 'react-router-dom'
+import { cn } from '@/lib/utils'
 
 const Navigation = () => {
+  const location = useLocation()
+
+  const links = [
+    { path: '/', label: '퀴즈!' },
+    { path: '/rank', label: '랭킹' },
+  ]
+
   return (
-    <NavConatainer>
-      <ul>
-        <li>
-          <Link to='/' style={{ color: '#FDF7FF' }}>
-            퀴즈!
-          </Link>
-        </li>
-        <li>
-          <Link to='/rank' style={{ color: '#FDF7FF' }}>
-            순위판
-          </Link>
-        </li>
-      </ul>
-    </NavConatainer>
+      <nav className="flex justify-center">
+          <ul className="flex gap-8">
+              {links.map(({ path, label }) => (
+                  <li key={path}>
+                      <Link
+              to={path}
+              className={cn(
+                'text-xl font-medium transition-all',
+                location.pathname === path
+                  ? 'text-white font-bold scale-110'
+                  : 'text-gray-400 hover:text-white'
+              )}
+            >
+                          {label}
+                      </Link>
+                  </li>
+        ))}
+          </ul>
+      </nav>
   )
 }
 

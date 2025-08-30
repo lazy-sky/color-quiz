@@ -1,13 +1,18 @@
 {
-  "extends": ["airbnb", "airbnb/hooks", "react-app", "prettier", "plugin:react/recommended", "plugin:prettier/recommended"],
+  "extends": [
+    "react-app"
+  ],
   "env": {
     "browser": true
   },
   "settings": {
-    "import/extensions": [".js", ".jsx", ".ts", ".tsx"],
     "import/resolver": {
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      },
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.json"
       }
     },
     "react": {
@@ -35,12 +40,7 @@
     "import/no-unresolved": "off",
     "import/order": "off",
     "import/no-anonymous-default-export": "off",
-    "import/no-extraneous-dependencies": [
-      "error",
-      {
-        "devDependencies": [".storybook/**", "src/stories/**"]
-      }
-    ],
+    "import/no-extraneous-dependencies": "off",
     "max-lines": ["warn", 150],
     "no-param-reassign": ["error", { "props": false }],
     "no-use-before-define": "off",
@@ -48,7 +48,7 @@
 
     "no-shadow": "off",
     "no-unused-expressions": ["warn"],
-    "@typescript-eslint/no-shadow": ["error"],
+    "@typescript-eslint/no-shadow": "off",
     "@typescript-eslint/naming-convention": "off",
     "@typescript-eslint/unbound-method": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
@@ -70,15 +70,6 @@
         "controlComponents": ["input"]
       }
     ],
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
-      }
-    ]
+    "import/extensions": "off"
   }
 }

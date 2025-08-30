@@ -1,33 +1,33 @@
 import { useCallback, useRef } from 'react'
 import { useRecoilState } from 'recoil'
 
-import { remainTimeState } from 'store/atom'
+import { remainTimeState } from '@/store/atom'
 
 const useTimer = () => {
   const [remainTime, setRemainTime] = useRecoilState(remainTimeState)
-  const intervalRef: { current: NodeJS.Timeout | null } = useRef(null)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const startTimer = useCallback(() => {
-    if (intervalRef.current !== null) return
+    if (intervalRef.current) return
 
     intervalRef.current = setInterval(() => {
-      setRemainTime((prev) => prev - 1)
+      setRemainTime((prev: number) => prev - 1)
     }, 1000)
   }, [setRemainTime])
 
   const stopTimer = useCallback(() => {
-    if (intervalRef.current === null) return
-
-    clearInterval(intervalRef.current)
-    intervalRef.current = null
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
   }, [])
 
   const resetTimer = useCallback(() => {
-    setRemainTime((_) => 15)
+    setRemainTime((_: number) => 15)
   }, [setRemainTime])
 
   const minusTime = useCallback(() => {
-    setRemainTime((prev) => Math.max(prev - 3, 0))
+    setRemainTime((prev: number) => Math.max(prev - 3, 0))
   }, [setRemainTime])
 
   return { remainTime, startTimer, stopTimer, resetTimer, minusTime }

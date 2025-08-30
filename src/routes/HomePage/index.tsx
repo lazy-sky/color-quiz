@@ -1,14 +1,12 @@
-import PageHeader from 'components/PageHeader'
 import ScoreBoard from './ScoreBoard'
 import ColorBoard from './ColorBoard'
 
 const HomePage = () => {
   return (
-    <div>
-      <PageHeader title='Color Quiz' />
-      <ScoreBoard />
-      <ColorBoard />
-    </div>
+      <div className="flex-1 flex flex-col gap-8 justify-center">
+          <ScoreBoard />
+          <ColorBoard />
+      </div>
   )
 }
 

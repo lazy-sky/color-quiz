@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { usePrevious } from 'react-use'
+import { motion } from 'framer-motion'
 
-import { useScore, useStage, useTimer } from 'hooks'
-
-import styles from './colorBoard.module.scss'
+import { useScore, useStage, useTimer } from '@/hooks'
 
 interface RGBProps {
   red: number
@@ -60,8 +59,7 @@ const ColorBoard = () => {
     const answerColorCell = makeColorCell(
       {
         red: red - initialDifficulty + Math.min(initialDifficulty - 1, stage),
-        green:
-          green - initialDifficulty + Math.min(initialDifficulty - 1, stage),
+        green: green - initialDifficulty + Math.min(initialDifficulty - 1, stage),
         blue: blue - initialDifficulty + Math.min(initialDifficulty - 1, stage),
       },
       handleClickAnswer
@@ -77,26 +75,37 @@ const ColorBoard = () => {
     resetTimer()
   }, [makeColorBoard, prevStage, remainTime, resetTimer, stage, updateScore])
 
+  const gridCols = Math.round((stage + 0.5) / 2) + 1
+
   return (
-    <ul
-      className={styles.grid}
-      style={{
-        gridTemplateColumns: `repeat(${
-          Math.round((stage + 0.5) / 2) + 1
-        }, 1fr)`,
-      }}
-    >
-      {colors.map(({ id, onClick, rgb }) => (
-        <li
-          key={id}
-          style={{
-            backgroundColor: `rgb(${rgb.red},${rgb.green},${rgb.blue})`,
-          }}
-        >
-          <button type='button' aria-label='color' onClick={onClick} />
-        </li>
-      ))}
-    </ul>
+      <div className="flex justify-center items-center flex-1">
+          <ul
+        className="grid gap-3 w-[min(90vw,min(600px,60vh))] aspect-square"
+        style={{
+          gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
+        }}
+      >
+              {colors.map(({ id, onClick, rgb }) => (
+                  <motion.li
+            key={id}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              backgroundColor: `rgb(${rgb.red},${rgb.green},${rgb.blue})`,
+            }}
+            className="relative rounded-lg shadow-lg overflow-hidden"
+          >
+                      <button
+              type="button"
+              aria-label="color"
+              onClick={onClick}
+              className="absolute inset-0 w-full h-full transition-transform hover:scale-95 active:scale-90 focus:outline-none"
+            />
+                  </motion.li>
+        ))}
+          </ul>
+      </div>
   )
 }
 

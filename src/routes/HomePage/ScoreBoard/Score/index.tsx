@@ -1,14 +1,11 @@
 import { memo } from 'react'
-import AnimatedNumber from 'react-animated-numbers'
 
-const Score = ({ score }: { score: number }) => {
-  return (
-    <AnimatedNumber
-      animateToNumber={score}
-      includeComma
-      fontStyle={{ fontSize: 28 }}
-    />
-  )
+interface ScoreProps {
+  score: number
+}
+
+const Score = ({ score }: ScoreProps) => {
+  return <span className='text-2xl font-bold'>{score.toLocaleString()}</span>
 }
 
 export default memo(Score)

@@ -1,99 +1,81 @@
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
 import {
-  query,
   collection,
   getDocs,
+  query,
   orderBy,
-  where,
   limit,
 } from 'firebase/firestore'
-import PageHeader from 'components/PageHeader'
+import { motion } from 'framer-motion'
 
-import { dbService } from 'myFirebase'
+import { dbService } from '@/lib/firebase'
 
 interface RankProps {
   id: string
-  createdAt: string
+  nickname: string
   stage: number
   score: number
-  nickname: string
+  createdAt: string
 }
-
-const Ranking = styled.ul`
-  position: relative;
-  list-style: none;
-  margin: 12px 0;
-  padding: 0;
-  border: 2px solid #fdf7ff;
-
-  li {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr 2fr 2fr;
-    margin: 8px 0;
-    padding: 4px;
-    border-bottom: 1px solid #fdf7ff;
-    text-align: center;
-  }
-
-  li:first-child {
-    font-weight: bold;
-    background: grey;
-    position: sticky;
-    top: 0;
-    left: 0;
-    margin: 0;
-  }
-`
 
 const RankingPage = () => {
   const [ranks, setRanks] = useState<RankProps[]>([])
 
-  const getRanks = async () => {
-    // TODO: 나중에 무한 스크롤 랭킹보드로
-    const topRanks = query(
-      collection(dbService, 'scores'),
-      where('score', '>', 0),
-      orderBy('score', 'desc'),
-      limit(100)
-    )
-    const documentSnapshots = await getDocs(topRanks)
-
-    documentSnapshots.forEach((document) => {
-      const rankObject = {
-        ...document.data(),
-        id: document.id,
-      } as RankProps
-      setRanks((prev) => [...prev, rankObject])
-    })
-  }
-
   useEffect(() => {
+    const getRanks = async () => {
+      const q = query(
+        collection(dbService, 'scores'),
+        orderBy('score', 'desc'),
+        limit(10)
+      )
+      const querySnapshot = await getDocs(q)
+      const rankData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as RankProps[]
+      setRanks(rankData)
+    }
+
     getRanks()
   }, [])
 
   return (
-    <>
-      <PageHeader title='Top 100' />
-      <Ranking>
-        <li>
-          <div>순위</div>
-          <div>닉네임</div>
-          <div>단계</div>
-          <div>점수</div>
-          <div>등록일</div>
-        </li>
-        {ranks.map((rank, i) => (
-          <li key={rank.id}>
-            <div>{i + 1}</div>
-            <div>{rank.nickname}</div>
-            <div>{rank.stage}</div>
-            <div>{rank.score.toLocaleString()}</div>
-            <div>{rank.createdAt}</div>
-          </li>
-        ))}
-      </Ranking>
-    </>
+      <div className="container max-w-2xl mx-auto px-4">
+          <div className="mt-8">
+              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden">
+                  <div className="grid grid-cols-4 gap-4 p-4 border-b border-gray-700 text-sm font-medium text-gray-400">
+                      <div>순위</div>
+                      <div>닉네임</div>
+                      <div className="text-center">단계</div>
+                      <div className="text-right">점수</div>
+                  </div>
+                  <div className="divide-y divide-gray-700">
+                      {ranks.map((rank, index) => (
+                          <motion.div
+                key={rank.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="grid grid-cols-4 gap-4 p-4 items-center hover:bg-gray-700/30 transition-colors"
+              >
+                              <div className="font-medium">
+                                  {index + 1}
+                                  <span className="text-xs text-gray-500 ml-1">위</span>
+                              </div>
+                              <div className="font-medium truncate">{rank.nickname}</div>
+                              <div className="text-center">
+                                  {rank.stage}
+                                  <span className="text-xs text-gray-500 ml-1">단계</span>
+                              </div>
+                              <div className="text-right font-medium text-primary">
+                                  {rank.score.toLocaleString()}
+                              </div>
+                          </motion.div>
+            ))}
+                  </div>
+              </div>
+          </div>
+      </div>
   )
 }
 
