@@ -7,7 +7,7 @@ const useScore = () => {
   const [score, setScore] = useRecoilState(scoreState)
 
   const updateScore = useCallback(
-    (stage, time) => {
+    (stage: number, time: number) => {
       setScore((prev) => prev + (stage - 1) ** 3 * time)
     },
     [setScore]
