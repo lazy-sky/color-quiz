@@ -17,8 +17,8 @@ const useTimer = () => {
 
   const stopTimer = useCallback(() => {
     if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-      intervalRef.current = null
+    clearInterval(intervalRef.current)
+    intervalRef.current = null
     }
   }, [])
 

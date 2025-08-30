@@ -22,7 +22,12 @@ const ScoreBoard = () => {
   const { score, resetScore } = useScore()
   const previousTime = usePrevious(remainTime)
   const [isGameOver, setIsGameOver] = useState(false)
-  const [nickname, setNickname] = useState('익명의 참가자')
+  const [nickname, setNickname] = useState('익명')
+
+  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.slice(0, 5) // 5자로 제한
+    setNickname(value)
+  }
 
   const submitScore = useCallback(
     async (nickname: string) => {
@@ -30,8 +35,8 @@ const ScoreBoard = () => {
         const { error } = await supabase.from('scores').insert({
           created_at: new Date().toISOString(),
           nickname,
-          stage,
-          score,
+        stage,
+        score,
         })
 
         if (error) {
@@ -155,15 +160,19 @@ const ScoreBoard = () => {
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
                       <p className="text-center text-gray-600 dark:text-gray-400">
-                          닉네임을 입력 후 버튼을 눌러주세요!
+                          닉네임을 입력 후 버튼을 눌러주세요! (최대 5자)
                       </p>
                       <input
               type="text"
               value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
+              onChange={handleNicknameChange}
+              maxLength={5}
               className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:ring-offset-gray-900 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-800"
-              placeholder="익명의 참가자"
+              placeholder="닉네임"
             />
+                      <div className="text-right text-sm text-gray-500 dark:text-gray-400">
+                          {nickname.length}/5
+                      </div>
                   </div>
                   <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-center">
                       <button

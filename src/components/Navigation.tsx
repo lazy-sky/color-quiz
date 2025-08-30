@@ -5,8 +5,8 @@ const Navigation = () => {
   const location = useLocation()
 
   const links = [
-    { path: '/', label: '퀴즈!' },
-    { path: '/rank', label: '순위판' },
+    { path: '/', label: 'QUIZ' },
+    { path: '/rank', label: 'RANKING' },
   ]
 
   return (
