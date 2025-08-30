@@ -6,7 +6,7 @@ const Navigation = () => {
 
   const links = [
     { path: '/', label: '퀴즈!' },
-    { path: '/rank', label: '랭킹' },
+    { path: '/rank', label: '순위판' },
   ]
 
   return (
@@ -19,8 +19,8 @@ const Navigation = () => {
               className={cn(
                 'text-xl font-medium transition-all',
                 location.pathname === path
-                  ? 'text-white font-bold scale-110'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'text-white dark:text-gray-900 font-bold scale-110'
+                  : 'text-gray-400 dark:text-gray-600 hover:text-white dark:hover:text-gray-900'
               )}
             >
                           {label}

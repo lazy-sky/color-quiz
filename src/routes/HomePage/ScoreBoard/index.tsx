@@ -126,7 +126,7 @@ const ScoreBoard = () => {
                               <span className="text-xl ml-1">초</span>
                           </span>
             ) : (
-                <span className="text-3xl font-medium text-destructive">
+                <span className="text-3xl font-medium text-destructive dark:text-red-600">
                     시간 초과!
                 </span>
             )}
@@ -141,10 +141,11 @@ const ScoreBoard = () => {
                       <DialogDescription className="text-center">
                           <div className="flex justify-center gap-8 mt-4 mb-6">
                               <div className="text-lg">
-                                  <span className="font-medium text-primary">{stage}</span> 단계
+                                  <span className="font-medium text-primary dark:text-blue-400">{stage}</span>{' '}
+                                  단계
                               </div>
                               <div className="text-lg">
-                                  <span className="font-medium text-primary">
+                                  <span className="font-medium text-primary dark:text-blue-400">
                                       {score.toLocaleString()}
                                   </span>{' '}
                                   점
@@ -153,27 +154,27 @@ const ScoreBoard = () => {
                       </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
-                      <p className="text-center text-muted-foreground">
+                      <p className="text-center text-gray-600 dark:text-gray-400">
                           닉네임을 입력 후 버튼을 눌러주세요!
                       </p>
                       <input
               type="text"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:ring-offset-gray-900 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-800"
               placeholder="익명의 참가자"
             />
                   </div>
                   <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-center">
                       <button
               onClick={handleRetry}
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-8 py-2"
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-900 text-gray-50 hover:bg-gray-900/90 h-10 px-8 py-2 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-800"
             >
                           재도전!
                       </button>
                       <button
               onClick={handleRanking}
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 px-8 py-2"
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-200 text-gray-900 hover:bg-gray-200/90 h-10 px-8 py-2 dark:bg-gray-800 dark:text-gray-50 dark:hover:bg-gray-800/90 dark:focus-visible:ring-gray-800"
             >
                           랭킹 확인!
                       </button>
