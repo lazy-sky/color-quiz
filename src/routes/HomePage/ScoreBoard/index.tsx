@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePrevious, useUnmount } from 'react-use'
 import { motion } from 'framer-motion'
+import Confetti from 'react-confetti'
 
 import { supabase } from '@/lib/supabase'
 import { useScore, useStage, useTimer } from '@/hooks'
@@ -25,23 +26,44 @@ const ScoreBoard = () => {
   const [nickname, setNickname] = useState('익명')
   const [rank, setRank] = useState<number | null>(null)
   const [totalPlayers, setTotalPlayers] = useState<number | null>(null)
+  const [showConfetti, setShowConfetti] = useState(false)
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  })
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      })
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const calculateRank = useCallback(async () => {
     try {
-      // 현재 점수보다 높은 점수의 개수를 조회
       const { count: higherScores } = await supabase
         .from('scores')
         .select('*', { count: 'exact', head: true })
         .gt('score', score)
 
-      // 전체 플레이어 수 조회
       const { count: total } = await supabase
         .from('scores')
         .select('*', { count: 'exact', head: true })
 
       if (higherScores !== null && total !== null) {
-        setRank(higherScores + 1)
+        const newRank = higherScores + 1
+        setRank(newRank)
         setTotalPlayers(total)
+        
+        // 10등 안에 들었을 때 폭죽 효과 표시
+        if (newRank <= 10) {
+          setShowConfetti(true)
+        }
       }
     } catch (error) {
       console.error('Error calculating rank:', error)
@@ -71,6 +93,7 @@ const ScoreBoard = () => {
     resetTimer()
     resetScore()
     startTimer()
+    setShowConfetti(false) // 게임 재시작할 때 컨페티 효과 중단
   }, [resetScore, resetStage, resetTimer, startTimer])
 
   const handleRetry = async () => {
@@ -88,6 +111,7 @@ const ScoreBoard = () => {
   const handleRanking = async () => {
     try {
       await submitScore(nickname)
+      setShowConfetti(false) // 랭킹 페이지로 이동할 때도 컨페티 효과 중단
       setIsGameOver(false)
       navigate('/rank')
     } catch (error) {
@@ -118,6 +142,17 @@ const ScoreBoard = () => {
 
   return (
       <>
+          {showConfetti && (
+          <div className="fixed inset-0 pointer-events-none z-[100]">
+              <Confetti
+            width={windowSize.width}
+            height={windowSize.height}
+            numberOfPieces={200}
+            recycle={true}
+            gravity={0.2}
+          />
+          </div>
+      )}
           <div className="max-w-md mx-auto backdrop-blur-sm mt-6 mb-6">
               <div className="grid gap-6">
                   <motion.div
@@ -178,6 +213,11 @@ const ScoreBoard = () => {
                                   {rank}위 / {totalPlayers}명
                                   <div className="text-sm text-gray-500 dark:text-gray-400">
                                       상위 {Math.round((rank / totalPlayers) * 100)}%
+                                      {rank <= 10 && (
+                                      <div className="mt-1 text-yellow-500 dark:text-yellow-400 font-bold">
+                                          🎉 TOP 10 달성! 🎉
+                                      </div>
+                      )}
                                   </div>
                               </div>
                 )}
