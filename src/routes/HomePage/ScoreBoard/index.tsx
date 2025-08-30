@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { usePrevious, useUnmount } from 'react-use'
 import { motion } from 'framer-motion'
 import Confetti from 'react-confetti'
@@ -18,6 +18,7 @@ import {
 
 const ScoreBoard = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const { stage, resetStage } = useStage()
   const { remainTime, startTimer, stopTimer, resetTimer } = useTimer()
   const { score, resetScore } = useScore()
@@ -43,6 +44,13 @@ const ScoreBoard = () => {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  // 라우트 변경 감지 및 상태 초기화
+  useEffect(() => {
+    setIsGameOver(false)
+    setShowConfetti(false)
+    startTimer()
+  }, [location.pathname, startTimer])
 
   const calculateRank = useCallback(async () => {
     try {
@@ -88,21 +96,31 @@ const ScoreBoard = () => {
     [score, stage]
   )
 
-  const resetGame = useCallback(() => {
+  const resetGameState = useCallback(() => {
+    setIsGameOver(false)
+    setShowConfetti(false)
+    setRank(null)
+    setTotalPlayers(null)
     resetStage()
-    resetTimer()
     resetScore()
+    resetTimer()
     startTimer()
-    setShowConfetti(false) // 게임 재시작할 때 컨페티 효과 중단
-  }, [resetScore, resetStage, resetTimer, startTimer])
+  }, [resetStage, resetScore, resetTimer, startTimer])
+
+  // 컴포넌트 마운트/언마운트 시 상태 초기화
+  useEffect(() => {
+    resetGameState()
+    return () => {
+      setIsGameOver(false)
+      setShowConfetti(false)
+      stopTimer()
+    }
+  }, [resetGameState, stopTimer])
 
   const handleRetry = async () => {
     try {
       await submitScore(nickname)
-      setIsGameOver(false)
-      setTimeout(() => {
-        resetGame()
-      }, 100)
+      resetGameState()
     } catch (error) {
       console.error('Error submitting score:', error)
     }
@@ -111,8 +129,7 @@ const ScoreBoard = () => {
   const handleRanking = async () => {
     try {
       await submitScore(nickname)
-      setShowConfetti(false) // 랭킹 페이지로 이동할 때도 컨페티 효과 중단
-      setIsGameOver(false)
+      resetGameState()
       navigate('/rank')
     } catch (error) {
       console.error('Error submitting score:', error)
