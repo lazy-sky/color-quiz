@@ -23,11 +23,30 @@ const ScoreBoard = () => {
   const previousTime = usePrevious(remainTime)
   const [isGameOver, setIsGameOver] = useState(false)
   const [nickname, setNickname] = useState('익명')
+  const [rank, setRank] = useState<number | null>(null)
+  const [totalPlayers, setTotalPlayers] = useState<number | null>(null)
 
-  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.slice(0, 5) // 5자로 제한
-    setNickname(value)
-  }
+  const calculateRank = useCallback(async () => {
+    try {
+      // 현재 점수보다 높은 점수의 개수를 조회
+      const { count: higherScores } = await supabase
+        .from('scores')
+        .select('*', { count: 'exact', head: true })
+        .gt('score', score)
+
+      // 전체 플레이어 수 조회
+      const { count: total } = await supabase
+        .from('scores')
+        .select('*', { count: 'exact', head: true })
+
+      if (higherScores !== null && total !== null) {
+        setRank(higherScores + 1)
+        setTotalPlayers(total)
+      }
+    } catch (error) {
+      console.error('Error calculating rank:', error)
+    }
+  }, [score])
 
   const submitScore = useCallback(
     async (nickname: string) => {
@@ -35,13 +54,11 @@ const ScoreBoard = () => {
         const { error } = await supabase.from('scores').insert({
           created_at: new Date().toISOString(),
           nickname,
-        stage,
-        score,
+          stage,
+          score,
         })
 
-        if (error) {
-          throw error
-        }
+        if (error) throw error
       } catch (error) {
         console.error('Error submitting score:', error)
       }
@@ -82,8 +99,9 @@ const ScoreBoard = () => {
     if (remainTime === 0 && previousTime !== 0) {
       stopTimer()
       setIsGameOver(true)
+      calculateRank()
     }
-  }, [remainTime, previousTime, stopTimer])
+  }, [remainTime, previousTime, stopTimer, calculateRank])
 
   useEffect(() => {
     if (!isGameOver) {
@@ -144,7 +162,7 @@ const ScoreBoard = () => {
                   <DialogHeader>
                       <DialogTitle className="text-2xl text-center">GAME OVER!</DialogTitle>
                       <DialogDescription className="text-center">
-                          <div className="flex justify-center gap-8 mt-4 mb-6">
+                          <div className="flex flex-col items-center gap-2 mt-4 mb-6">
                               <div className="text-lg">
                                   <span className="font-medium text-primary dark:text-blue-400">{stage}</span>{' '}
                                   단계
@@ -155,17 +173,25 @@ const ScoreBoard = () => {
                                   </span>{' '}
                                   점
                               </div>
+                              {rank !== null && totalPlayers !== null && (
+                              <div className="mt-2 text-lg font-medium text-primary dark:text-blue-400">
+                                  {rank}위 / {totalPlayers}명
+                                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                                      상위 {Math.round((rank / totalPlayers) * 100)}%
+                                  </div>
+                              </div>
+                )}
                           </div>
                       </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
                       <p className="text-center text-gray-600 dark:text-gray-400">
-                          닉네임을 입력 후 버튼을 눌러주세요! (최대 5자)
+                          닉네임을 입력 후 버튼을 눌러주세요!
                       </p>
                       <input
               type="text"
               value={nickname}
-              onChange={handleNicknameChange}
+              onChange={(e) => setNickname(e.target.value)}
               maxLength={5}
               className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:ring-offset-gray-900 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-800"
               placeholder="닉네임"
