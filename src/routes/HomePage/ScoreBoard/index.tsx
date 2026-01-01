@@ -54,14 +54,24 @@ const ScoreBoard = () => {
 
   const calculateRank = useCallback(async () => {
     try {
-      const { count: higherScores } = await supabase
+      // 환경 변수 확인
+      if (!process.env.REACT_APP_SUPABASE_URL || !process.env.REACT_APP_SUPABASE_ANON_KEY) {
+        console.warn('Supabase 환경 변수가 설정되지 않아 랭킹을 불러올 수 없습니다.')
+        return
+      }
+
+      const { count: higherScores, error: higherError } = await supabase
         .from('scores')
         .select('*', { count: 'exact', head: true })
         .gt('score', score)
 
-      const { count: total } = await supabase
+      if (higherError) throw higherError
+
+      const { count: total, error: totalError } = await supabase
         .from('scores')
         .select('*', { count: 'exact', head: true })
+
+      if (totalError) throw totalError
 
       if (higherScores !== null && total !== null) {
         const newRank = higherScores + 1
@@ -75,12 +85,19 @@ const ScoreBoard = () => {
       }
     } catch (error) {
       console.error('Error calculating rank:', error)
+      // 사용자에게 친화적인 에러 메시지 표시는 생략 (게임 플레이 방해 최소화)
     }
   }, [score])
 
   const submitScore = useCallback(
     async (nickname: string) => {
       try {
+        // 환경 변수 확인
+        if (!process.env.REACT_APP_SUPABASE_URL || !process.env.REACT_APP_SUPABASE_ANON_KEY) {
+          console.warn('Supabase 환경 변수가 설정되지 않아 점수를 저장할 수 없습니다.')
+          return
+        }
+
         const { error } = await supabase.from('scores').insert({
           created_at: new Date().toISOString(),
           nickname,
@@ -91,6 +108,7 @@ const ScoreBoard = () => {
         if (error) throw error
       } catch (error) {
         console.error('Error submitting score:', error)
+        // 사용자에게 친화적인 에러 메시지 표시는 생략 (게임 플레이 방해 최소화)
       }
     },
     [score, stage]

@@ -34,6 +34,13 @@ const RankingPage = () => {
   useEffect(() => {
     const getRanks = async () => {
       try {
+        // 환경 변수 확인
+        if (!process.env.REACT_APP_SUPABASE_URL || !process.env.REACT_APP_SUPABASE_ANON_KEY) {
+          console.warn('Supabase 환경 변수가 설정되지 않아 랭킹을 불러올 수 없습니다.')
+          setRanks([])
+          return
+        }
+
         const { data, error } = await supabase
           .from('scores')
           .select('*')
@@ -47,6 +54,7 @@ const RankingPage = () => {
         setRanks(data || [])
       } catch (error) {
         console.error('Error fetching ranks:', error)
+        setRanks([])
       }
     }
 
