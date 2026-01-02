@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
 
 import { supabase } from '@/lib/supabase'
 import type { Score } from '@/lib/supabase'
@@ -30,10 +29,14 @@ const formatDate = (dateString: string) => {
 
 const RankingPage = () => {
   const [ranks, setRanks] = useState<Score[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const MAX_RANKS = 500
 
   useEffect(() => {
-    const getRanks = async () => {
+    const loadRanks = async () => {
       try {
+        setIsLoading(true)
+        
         // 환경 변수 확인
         if (!process.env.REACT_APP_SUPABASE_URL || !process.env.REACT_APP_SUPABASE_ANON_KEY) {
           console.warn('Supabase 환경 변수가 설정되지 않아 랭킹을 불러올 수 없습니다.')
@@ -41,12 +44,13 @@ const RankingPage = () => {
           return
         }
 
+        // 상위 500개만 가져오기
         const { data, error } = await supabase
           .from('scores')
           .select('*')
           .order('score', { ascending: false })
           .order('created_at', { ascending: true })
-          .limit(500)
+          .limit(MAX_RANKS)
 
         if (error) {
           throw error
@@ -56,10 +60,12 @@ const RankingPage = () => {
       } catch (error) {
         console.error('Error fetching ranks:', error)
         setRanks([])
+      } finally {
+        setIsLoading(false)
       }
     }
 
-    getRanks()
+    loadRanks()
   }, [])
 
   return (
@@ -74,57 +80,74 @@ const RankingPage = () => {
                           <div className="text-right">점수</div>
                           <div className="text-right">일시</div>
                       </div>
-                      <div className="divide-y divide-gray-700 dark:divide-gray-300 max-h-[calc(100vh-8rem)] overflow-y-auto">
-                          {ranks.map((rank, index) => (
-                              <motion.div
-                  key={rank.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: Math.min(index * 0.05, 1) }}
-                  className={cn(
-                    "grid grid-cols-[2rem_1fr_2.5rem_3.5rem_3rem] sm:grid-cols-6 gap-1 sm:gap-4 p-2 sm:p-4 items-center hover:bg-gray-700/30 transition-colors dark:hover:bg-gray-300/30 text-xs sm:text-sm",
-                    index < 10 && "bg-yellow-500/5"
-                  )}
-                >
-                                  <div className="font-medium">
-                                      {index < 3 ? (
-                                          <span className="text-lg" aria-label={`${index + 1}등`}>
-                                              {index === 0 && '🥇'}
-                                              {index === 1 && '🥈'}
-                                              {index === 2 && '🥉'}
-                                          </span>
-                                      ) : (
-                                          <>
-                                              {index + 1}
-                                              <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-600 ml-0.5">위</span>
-                                          </>
-                                      )}
+                      <div className="divide-y divide-gray-700 dark:divide-gray-300 max-h-[calc(100vh-12rem)] overflow-y-auto">
+                          {ranks.length === 0 && isLoading ? (
+                              <div className="flex justify-center items-center py-12">
+                                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                                      <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-500 border-t-transparent dark:border-gray-400 dark:border-t-transparent"></div>
+                                      <span className="text-sm">랭킹을 불러오는 중...</span>
                                   </div>
-                                  <div className={cn(
-                                    "font-medium truncate sm:col-span-2",
-                                    index < 3 && "text-sm sm:text-base"
-                                  )}>
-                                      {rank.nickname}
+                              </div>
+                          ) : ranks.length === 0 && !isLoading ? (
+                              <div className="flex justify-center items-center py-12">
+                                  <div className="text-gray-500 dark:text-gray-400 text-sm">
+                                      랭킹 데이터가 없습니다
                                   </div>
-                                  <div className="text-center">
-                                      {rank.stage}
-                                      <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-600 ml-0.5">단계</span>
-                                  </div>
-                                  <div className={cn(
-                                    "text-right tabular-nums",
-                                    index < 3 && "text-sm sm:text-base font-bold"
-                                  )}>
-                                      {rank.score.toLocaleString()}
-                                  </div>
-                                  <div className="text-right text-gray-500 dark:text-gray-600">
-                                      <div className="text-[10px] leading-tight">
-                                          <span className="hidden sm:inline">{formatDate(rank.created_at).fullDatePart}</span>
-                                          <span className="sm:hidden">{formatDate(rank.created_at).shortDatePart}</span>
-                                      </div>
-                                      <div className="text-[10px] leading-tight">{formatDate(rank.created_at).timePart}</div>
-                                  </div>
-                              </motion.div>
-              ))}
+                              </div>
+                          ) : (
+                              <>
+                                  {ranks.map((rank, index) => {
+                                      const rankNum = index + 1
+                                      return (
+                                          <div
+                                              key={rank.id}
+                                              className={cn(
+                                                  "grid grid-cols-[2rem_1fr_2.5rem_3.5rem_3rem] sm:grid-cols-6 gap-1 sm:gap-4 p-2 sm:p-4 items-center hover:bg-gray-700/30 transition-colors dark:hover:bg-gray-300/30 text-xs sm:text-sm",
+                                                  rankNum <= 10 && "bg-yellow-500/5"
+                                              )}
+                                          >
+                                              <div className="font-medium">
+                                                  {rankNum <= 3 ? (
+                                                      <span className="text-lg" aria-label={`${rankNum}등`}>
+                                                          {rankNum === 1 && '🥇'}
+                                                          {rankNum === 2 && '🥈'}
+                                                          {rankNum === 3 && '🥉'}
+                                                      </span>
+                                                  ) : (
+                                                      <>
+                                                          {rankNum}
+                                                          <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-600 ml-0.5">위</span>
+                                                      </>
+                                                  )}
+                                              </div>
+                                              <div className={cn(
+                                                  "font-medium truncate sm:col-span-2",
+                                                  rankNum <= 3 && "text-sm sm:text-base"
+                                              )}>
+                                                  {rank.nickname}
+                                              </div>
+                                              <div className="text-center">
+                                                  {rank.stage}
+                                                  <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-600 ml-0.5">단계</span>
+                                              </div>
+                                              <div className={cn(
+                                                  "text-right tabular-nums",
+                                                  rankNum <= 3 && "text-sm sm:text-base font-bold"
+                                              )}>
+                                                  {rank.score.toLocaleString()}
+                                              </div>
+                                              <div className="text-right text-gray-500 dark:text-gray-600">
+                                                  <div className="text-[10px] leading-tight">
+                                                      <span className="hidden sm:inline">{formatDate(rank.created_at).fullDatePart}</span>
+                                                      <span className="sm:hidden">{formatDate(rank.created_at).shortDatePart}</span>
+                                                  </div>
+                                                  <div className="text-[10px] leading-tight">{formatDate(rank.created_at).timePart}</div>
+                                              </div>
+                                          </div>
+                                      )
+                                  })}
+                              </>
+                          )}
                       </div>
                   </div>
               </div>
