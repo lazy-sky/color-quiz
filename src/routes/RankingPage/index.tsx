@@ -45,7 +45,8 @@ const RankingPage = () => {
           .from('scores')
           .select('*')
           .order('score', { ascending: false })
-          .limit(100)
+          .order('created_at', { ascending: true })
+          .limit(500)
 
         if (error) {
           throw error

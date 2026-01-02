@@ -28,6 +28,8 @@ const ScoreBoard = () => {
   const [rank, setRank] = useState<number | null>(null)
   const [totalPlayers, setTotalPlayers] = useState<number | null>(null)
   const [showConfetti, setShowConfetti] = useState(false)
+  const [isScoreSubmitted, setIsScoreSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -91,7 +93,21 @@ const ScoreBoard = () => {
 
   const submitScore = useCallback(
     async (nickname: string) => {
+      // 이미 저장된 경우 중복 저장 방지
+      if (isScoreSubmitted) {
+        console.warn('점수가 이미 저장되었습니다.')
+        return
+      }
+
+      // 이미 제출 중인 경우 중복 제출 방지
+      if (isSubmitting) {
+        console.warn('점수 저장 중입니다.')
+        return
+      }
+
       try {
+        setIsSubmitting(true)
+        
         // 환경 변수 확인
         if (!process.env.REACT_APP_SUPABASE_URL || !process.env.REACT_APP_SUPABASE_ANON_KEY) {
           console.warn('Supabase 환경 변수가 설정되지 않아 점수를 저장할 수 없습니다.')
@@ -106,12 +122,17 @@ const ScoreBoard = () => {
         })
 
         if (error) throw error
+
+        // 저장 성공 시 플래그 설정
+        setIsScoreSubmitted(true)
       } catch (error) {
         console.error('Error submitting score:', error)
         // 사용자에게 친화적인 에러 메시지 표시는 생략 (게임 플레이 방해 최소화)
+      } finally {
+        setIsSubmitting(false)
       }
     },
-    [score, stage]
+    [score, stage, isScoreSubmitted, isSubmitting]
   )
 
   const resetGameState = useCallback(() => {
@@ -119,6 +140,8 @@ const ScoreBoard = () => {
     setShowConfetti(false)
     setRank(null)
     setTotalPlayers(null)
+    setIsScoreSubmitted(false)
+    setIsSubmitting(false)
     resetStage()
     resetScore()
     resetTimer()
@@ -138,19 +161,26 @@ const ScoreBoard = () => {
   const handleRetry = async () => {
     try {
       await submitScore(nickname)
+      // 저장 완료 여부와 관계없이 게임 상태 리셋 (이미 저장된 경우에도 재도전 가능)
       resetGameState()
     } catch (error) {
       console.error('Error submitting score:', error)
+      // 에러가 발생해도 게임 상태는 리셋
+      resetGameState()
     }
   }
 
   const handleRanking = async () => {
     try {
       await submitScore(nickname)
+      // 저장 완료 여부와 관계없이 게임 상태 리셋 후 랭킹 페이지로 이동
       resetGameState()
       navigate('/rank')
     } catch (error) {
       console.error('Error submitting score:', error)
+      // 에러가 발생해도 랭킹 페이지로 이동
+      resetGameState()
+      navigate('/rank')
     }
   }
 
@@ -261,13 +291,14 @@ const ScoreBoard = () => {
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
                       <p className="text-center text-gray-600 dark:text-gray-400">
-                          닉네임을 입력 후 버튼을 눌러주세요!
+                          {isSubmitting ? '점수를 저장하고 있습니다...' : '닉네임을 입력 후 버튼을 눌러주세요!'}
                       </p>
                       <input
               type="text"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               maxLength={5}
+              disabled={isSubmitting || isScoreSubmitted}
               className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:ring-offset-gray-900 dark:placeholder:text-gray-400 dark:focus-visible:ring-gray-800"
               placeholder="닉네임"
             />
@@ -276,18 +307,29 @@ const ScoreBoard = () => {
                       </div>
                   </div>
                   <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-center">
-                      <button
-              onClick={handleRetry}
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-900 text-gray-50 hover:bg-gray-900/90 h-10 px-8 py-2 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-800"
-            >
-                          재도전!
-                      </button>
-                      <button
-              onClick={handleRanking}
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-200 text-gray-900 hover:bg-gray-200/90 h-10 px-8 py-2 dark:bg-gray-800 dark:text-gray-50 dark:hover:bg-gray-800/90 dark:focus-visible:ring-gray-800"
-            >
-                          랭킹 확인!
-                      </button>
+                      {isSubmitting ? (
+                          <div className="flex items-center justify-center gap-2 py-2">
+                              <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-900 border-t-transparent dark:border-gray-50 dark:border-t-transparent"></div>
+                              <span className="text-sm text-gray-600 dark:text-gray-400">점수 저장 중...</span>
+                          </div>
+                      ) : (
+                          <>
+                              <button
+                                  onClick={handleRetry}
+                                  disabled={isScoreSubmitted}
+                                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-900 text-gray-50 hover:bg-gray-900/90 h-10 px-8 py-2 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-800"
+                              >
+                                  {isScoreSubmitted ? '저장됨' : '재도전!'}
+                              </button>
+                              <button
+                                  onClick={handleRanking}
+                                  disabled={isScoreSubmitted}
+                                  className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-200 text-gray-900 hover:bg-gray-200/90 h-10 px-8 py-2 dark:bg-gray-800 dark:text-gray-50 dark:hover:bg-gray-800/90 dark:focus-visible:ring-gray-800"
+                              >
+                                  {isScoreSubmitted ? '저장됨' : '랭킹 확인!'}
+                              </button>
+                          </>
+                      )}
                   </DialogFooter>
               </DialogContent>
           </Dialog>
