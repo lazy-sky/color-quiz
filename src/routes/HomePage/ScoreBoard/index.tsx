@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import Confetti from 'react-confetti'
 
 import { supabase } from '@/lib/supabase'
-import { useScore, useStage, useTimer } from '@/hooks'
+import { useScore, useStage, useTimer, useHint } from '@/hooks'
 import Score from './Score'
 import {
   Dialog,
@@ -22,6 +22,7 @@ const ScoreBoard = () => {
   const { stage, resetStage } = useStage()
   const { remainTime, startTimer, stopTimer, resetTimer } = useTimer()
   const { score, resetScore } = useScore()
+  const { resetHint } = useHint()
   const previousTime = usePrevious(remainTime)
   const [isGameOver, setIsGameOver] = useState(false)
   const [nickname, setNickname] = useState('익명')
@@ -145,8 +146,9 @@ const ScoreBoard = () => {
     resetStage()
     resetScore()
     resetTimer()
+    resetHint()
     startTimer()
-  }, [resetStage, resetScore, resetTimer, startTimer])
+  }, [resetStage, resetScore, resetTimer, resetHint, startTimer])
 
   // 컴포넌트 마운트/언마운트 시 상태 초기화
   useEffect(() => {

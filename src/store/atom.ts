@@ -21,3 +21,8 @@ export const gameModeState = atom<GameMode>({
   key: 'gameModeState',
   default: 'random',
 })
+
+export const hintUsedState = atom<number>({
+  key: 'hintUsedState',
+  default: 0, // 사용한 힌트 횟수 (최대 3번)
+})
