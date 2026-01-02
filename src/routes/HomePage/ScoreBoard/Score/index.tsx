@@ -5,7 +5,7 @@ interface ScoreProps {
 }
 
 const Score = ({ score }: ScoreProps) => {
-  return <span className='text-2xl font-bold'>{score.toLocaleString()}</span>
+  return <span className='text-xl sm:text-2xl font-bold'>{score.toLocaleString()}</span>
 }
 
 export default memo(Score)

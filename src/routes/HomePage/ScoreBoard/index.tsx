@@ -220,15 +220,15 @@ const ScoreBoard = () => {
           />
           </div>
       )}
-          <div className="max-w-md mx-auto backdrop-blur-sm mt-6 mb-6">
-              <div className="grid gap-6">
+          <div className="max-w-md mx-auto backdrop-blur-sm mt-2 mb-2 sm:mt-6 sm:mb-6">
+              <div className="grid gap-2 sm:gap-6">
                   <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className="flex items-center justify-center"
           >
-                      <span className="text-2xl mr-2">Stage</span>
-                      <span className="text-3xl font-bold">{stage}</span>
+                      <span className="text-lg sm:text-2xl mr-1 sm:mr-2">Stage</span>
+                      <span className="text-xl sm:text-3xl font-bold">{stage}</span>
                   </motion.div>
                   <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -237,7 +237,7 @@ const ScoreBoard = () => {
             className="flex items-center justify-center"
           >
                       <Score score={score} />
-                      <span className="text-2xl ml-2">점</span>
+                      <span className="text-lg sm:text-2xl ml-1 sm:ml-2">점</span>
                   </motion.div>
                   <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -246,12 +246,12 @@ const ScoreBoard = () => {
             className="flex items-center justify-center"
           >
                       {remainTime > 0 ? (
-                          <span className="text-3xl font-medium">
+                          <span className="text-xl sm:text-3xl font-medium">
                               {remainTime}
-                              <span className="text-xl ml-1">초</span>
+                              <span className="text-base sm:text-xl ml-1">초</span>
                           </span>
             ) : (
-                <span className="text-3xl font-medium text-destructive dark:text-red-600">
+                <span className="text-xl sm:text-3xl font-medium text-destructive dark:text-red-600">
                     시간 초과!
                 </span>
             )}

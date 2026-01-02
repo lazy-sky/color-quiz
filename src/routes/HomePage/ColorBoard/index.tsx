@@ -185,6 +185,18 @@ const ColorBoard = () => {
 
   return (
       <div className="flex flex-col justify-center items-center flex-1 gap-4">
+          <button
+        type="button"
+        onClick={handleUseHint}
+        disabled={!canUseHint || colors.length <= 2}
+        className="relative px-3 py-1.5 sm:px-6 sm:py-3 rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white font-semibold text-sm sm:text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50 active:scale-95 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none shadow-lg overflow-hidden group"
+      >
+              <span className="relative z-10 flex items-center gap-1 sm:gap-2">
+                  <span className="text-lg sm:text-2xl group-hover:rotate-12 transition-transform duration-300">💡</span>
+                  <span>Hint! ({hintUsed}/{maxHints})</span>
+              </span>
+              <span className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+          </button>
           <ul
         className="grid gap-3 w-[min(90vw,min(600px,60vh))] aspect-square"
         style={{
@@ -211,18 +223,6 @@ const ColorBoard = () => {
                   </motion.li>
         ))}
           </ul>
-          <button
-        type="button"
-        onClick={handleUseHint}
-        disabled={!canUseHint || colors.length <= 2}
-        className="relative px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50 active:scale-95 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none shadow-lg overflow-hidden group"
-      >
-              <span className="relative z-10 flex items-center gap-2">
-                  <span className="text-2xl group-hover:rotate-12 transition-transform duration-300">💡</span>
-                  <span>Hint! ({hintUsed}/{maxHints})</span>
-              </span>
-              <span className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-          </button>
       </div>
   )
 }
